@@ -8,6 +8,17 @@ all hours: lag_7d 202.8 → LGBM A 123.1 → LGBM B (+events) 111.9; event days 
 end hour(+1): 1368→1363→1013. Event features help most at the end hour but the error there is still large
 (~1000 people/hour): next try capacity/ticket counts, event-type-specific models, quantile/Poisson loss, tuning.
 Notes: early stopping uses the valid set, so valid scores are slightly optimistic; test is clean.
+
+Variants (`train_variants.py` → `variant_results.csv`, features = C, test MAE):
+| subset | C L1 | C Poisson | avg(L1,Poisson) | per-type L1 | per-type Poisson |
+|---|---|---|---|---|---|
+| all | 111.3 | 112.1 | **109.1** | 123.7 | 124.5 |
+| concert days | 208.5 | 202.0 | **200.9** | 227.2 | 221.3 |
+| end hour(+1) | 982.5 | **906.9** | 930.6 | 995.5 | 914.8 |
+- Per-event-type models are worse everywhere (event segments have only ~1.3–3.3k training rows); keep one global model with the type flags.
+- Poisson loss cuts the end-hour error ~8% (valid 936→911, test 983→907) but is slightly worse on ordinary hours (L1 targets the median);
+  averaging L1 and Poisson gives the best overall MAE. Candidate: use Poisson (or the blend) as the main model since end hours matter most.
+- Next ideas: Tweedie/log-target, tune num_leaves/min_child_samples, sample weights for event hours, peak-hour specific evaluation (peak error is still ~900).
 Original plan:
 - Time-based split, no shuffling. Example (not decided): train 2018–2019 + 2023, validate 2024–2025, test 2026.
 - Baseline A: calendar/time features + weather + lags only. Baseline B: A + event features. Compare, especially on event evenings, since that is what staff care about.
