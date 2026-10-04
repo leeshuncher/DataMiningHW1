@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Forecast **hourly 進站 (entry) counts at 台北小巨蛋 station for the next day**, to help station staff plan staffing/ticket booths/crowd control on event nights. Inputs must be things known at prediction time: date/hour, weather, same-hour last week, and the event schedule (start/end time). No model has been trained yet; the repo currently ends at the modelling table `master.parquet`.
+Forecast **hourly 進站 (entry) counts at 台北小巨蛋 station for the next day**, to help station staff plan staffing/ticket booths/crowd control on event nights. Inputs must be things known at prediction time: date/hour, weather, same-hour last week, and the event schedule (start/end time). Split: train 2018–2025 / test 2026-01..08 (no validation set; tree count picked on an inner 2025 hold-out). Baselines are in `train_baseline.py` (results in `baseline_results.csv`); `python` needs pandas/lightgbm/pyarrow.
 
 ## Environment and commands
 
@@ -20,9 +20,11 @@ Forecast **hourly 進站 (entry) counts at 台北小巨蛋 station for the next 
 3. **`arena_entries_hourly.csv`** (`date,hour,entries`): sum of 人次 where 進站 is the arena station, from step 2. Hours with no row (no service) are missing here and are filled with 0 later.
 4. `fetch_external.py` → `external/weather_actual.csv` (Open-Meteo ERA5), `external/weather_forecast.csv` (archived forecasts, 2022+; **not used**), `external/calendar.csv` (ruyut/TaiwanCalendar holidays and makeup workdays).
 5. **Event schedule** (from the official site www.arena.taipei 「歷年節目查詢」):
-   - `match_events.py` and `fetch_details.py` read the 25 saved listing pages from a Claude scratchpad path (`.../scratchpad/pages/*.html`, hard-coded) that is **not in the repo**. Re-fetch them (`News.aspx?PageSize=20&n=4A7BFF61FA074F0F&page=N&sms=F9A95D3F5A5C2C68`, N=1..25, host must be `www.`) and update that path before re-running.
+   - `match_events.py`, `fetch_details.py`, `fetch_tickets.py` read the 25 saved listing pages from `external/arena_pages/{1..25}.html` (fetched from `News.aspx?PageSize=20&n=4A7BFF61FA074F0F&page=N&sms=F9A95D3F5A5C2C68`, host must be `www.`; the sandbox must allow www.arena.taipei).
+   - `fetch_tickets.py` → `events_tickets.csv` (主辦單位/票價/售票系統 per event page; no ticket counts exist on the site). `build_event_features.py` turns prices into `price_median/min/mean`, `n_price_tiers` (median, not max, because VIP/package prices distort the max).
    - `match_events.py` → `events_official.csv` (one row per event date; cancelled dates dropped, postponed dates moved) and fills `活動名稱/類型/備註` in `events/candidates_YYYY.csv`.
    - `fetch_details.py` → `events_detail.csv` (the 「活動日期/時間」 field of every detail page); `fill_times.py` → `events_sessions.csv` and fills 開演時間/預估散場 in the yearly sheets.
+   - `event_series.py` links titles of the same artist/series (used by `build_master.py` for `series_*` history features; they bring little gain, see TODO).
    - `build_event_features.py` → `events_daily.csv` (daily features from the official schedule).
 6. `build_master.py` joins everything into the hourly table `master.parquet`.
 

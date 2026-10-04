@@ -49,6 +49,44 @@ df["is_post_end_hour"] = df["rel_end_h"] == 1
 
 # exclude 2017 (lags incomplete) and 2020-2022 (COVID); done after the lags so 2023+ lags still see 2022 values
 df = df[~df.index.year.isin([2017, 2020, 2021, 2022])]
+# past-event size features: entries in the end window (end hour-1 .. end hour+2) of earlier event days.
+# Only event days >= 7 days before the target day are used (same rule as the lags); COVID years are already dropped.
+win = {}
+for d, g in df[df["has_event_time"]].groupby("date"):
+    e = int(g["last_end_h"].iloc[0] // 1)
+    win[d] = (g.loc[g["hour"].between(e - 1, e + 2), "entries"].sum(), "concert" if g["is_concert"].iloc[0] else "sport" if g["is_sport"].iloc[0] else "other")
+wd = pd.DataFrame(win, index=["w", "t"]).T.sort_index(); wd["w"] = wd["w"].astype(float)
+def past_feats(d):
+    p = wd[wd.index <= d - pd.Timedelta(days=7)]
+    if p.empty: return pd.Series({"prev_event_win": None, "prev3_event_win": None, "prev_type_win": None})
+    t = wd.loc[d, "t"] if d in wd.index else None
+    pt = p[p.t == t].w.tail(3) if t else p.w.tail(0)
+    return pd.Series({"prev_event_win": p.w.iloc[-1], "prev3_event_win": p.w.tail(3).mean(), "prev_type_win": pt.mean() if len(pt) else None})
+pf = pd.DataFrame({d: past_feats(d) for d in df.loc[df["event_today"], "date"].unique()}).T
+pf.index = pd.to_datetime(pf.index)
+df = df.join(pf, on="date")
+
+# same artist / series history: end-window entries of earlier shows whose title is linked to today's title (event_series.py).
+# Same >= 7 day rule as the lags. Per title: latest linked show, mean of all linked shows, number of linked past shows, days since the latest.
+from event_series import title_links
+off = pd.read_csv("events_official.csv", encoding="utf-8-sig", parse_dates=["date"])
+links = title_links(dict(zip(off["raw"], off["title"])))
+dates_of = off.groupby("raw")["date"].apply(list).to_dict()
+sw = wd["w"].to_dict()
+def series_feats(d, raw):
+    past = [(pd.Timestamp(d2), sw[pd.Timestamp(d2)]) for r2 in links.get(raw, {}) for d2 in dates_of[r2]
+            if pd.Timestamp(d2) <= d - pd.Timedelta(days=7) and pd.Timestamp(d2) in sw]
+    if not past: return None
+    past.sort()
+    return dict(series_last_win=past[-1][1], series_mean_win=sum(w for _, w in past) / len(past),
+                series_n_past=len(past), series_days_since=(d - past[-1][0]).days)
+rows = {}
+for d, g in off.groupby("date"):
+    fs = [f for f in (series_feats(d, r) for r in g["raw"]) if f]
+    if fs: rows[d] = pd.DataFrame(fs).mean()
+sf = pd.DataFrame(rows).T
+df = df.join(sf, on="date")
+df["series_n_past"] = df["series_n_past"].fillna(0)
 df = df.drop(columns="date")
 df.to_parquet("master.parquet")
 df.to_csv("master.csv", encoding="utf-8-sig")

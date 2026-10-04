@@ -1,0 +1,6 @@
+﻿model,valid_all,valid_event,valid_end,test_all,test_event,test_end
+tweedie1.1_default,118.4,197.1,899.9,114.2,196.6,909.0
+tweedie1.1_tuned,117.9,196.6,908.6,113.0,200.0,936.4
+l1_default,114.4,186.4,935.8,111.3,193.0,982.5
+l1_tuned_params,115.6,186.9,936.1,111.0,191.3,941.3
+"blend(tweedie1.1_tuned,l1_tuned)",114.0,187.7,911.7,108.9,191.0,919.6

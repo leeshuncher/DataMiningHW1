@@ -2,11 +2,11 @@
 import re, html, csv, urllib.request, time
 from concurrent.futures import ThreadPoolExecutor
 
-SCRATCH = "/tmp/claude-1007/-home-114-leeshuncher-DataMining-Hw1/10f7ac13-f153-471e-864b-f9ffac07c3db/scratchpad"
+SCRATCH = "external"
 BASE = "https://www.arena.taipei/"
 items = []
 for p in range(1, 26):
-    h = open(f"{SCRATCH}/pages/{p}.html", encoding="utf-8", errors="ignore").read()
+    h = open(f"{SCRATCH}/arena_pages/{p}.html", encoding="utf-8", errors="ignore").read()
     for href, t in re.findall(r'<a\s+href="(News_Content\.aspx[^"]*)"[^>]*>(.*?)</a>', h, re.S):
         t = html.unescape(re.sub(r"\s+", " ", re.sub("<[^>]+>", "", t))).strip()
         if re.match(r"\d{4}/", t): items.append((html.unescape(href), t))
