@@ -2,7 +2,7 @@
 import re, html, datetime as dt, pandas as pd
 from event_utils import kind
 
-PAGES = "/tmp/claude-1007/-home-114-leeshuncher-DataMining-Hw1/10f7ac13-f153-471e-864b-f9ffac07c3db/scratchpad/pages"
+PAGES = "external/arena_pages"
 rows = []
 for p in range(1, 26):
     h = open(f"{PAGES}/{p}.html", encoding="utf-8", errors="ignore").read()

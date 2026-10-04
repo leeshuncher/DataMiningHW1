@@ -16,7 +16,7 @@ Original plan:
 
 ## 2. Make the pipeline reproducible
 - Save scripts for the steps that were run inline: OD download, station filter (`data/arena/`), hourly entry aggregation (`arena_entries_hourly.csv`).
-- Save the 25 arena.taipei listing pages into the repo (e.g. `external/arena_pages/`) and replace the hard-coded scratchpad path in `match_events.py` and `fetch_details.py`.
+- ~~Save the 25 arena.taipei listing pages~~ done: `external/arena_pages/`, scripts now read it.
 - Generate the `events/candidates_YYYY.csv` sheets from a script instead of inline code.
 
 ## 3. Event data gaps
@@ -24,7 +24,11 @@ Original plan:
 - ~70 matched event days have no estimated end time (e.g. 太陽馬戲《阿凡達前傳》 pages use a different format); improve the parser.
 - 225 official event dates were not flagged by the flow detector; decide whether small/daytime events count as event features.
 - Review `類型` (keyword heuristic) and fill the `確認` column in `events/`.
-- Add venue capacity / ticket counts (not collected yet).
+- Capacity / ticket counts: DONE as far as the official site allows. Pages give 票價/主辦/售票系統, **no ticket counts**;
+  venue capacity (www.arena.taipei 小巨蛋簡介): sports ~15,000, concerts ~11,000–13,000 depending on stage (fixed seats 12,477). Price features
+  (`price_median/min/mean`, `n_price_tiers`) added; they help only slightly (LGBM C vs B, test end-hour(+1) MAE 1012.7 → 982.5, all 111.9 → 111.3).
+  Real sales counts would need the ticket platforms (KKTIX/拓元/寬宏/年代), not tried.
+- ~25% of event days still have no price (awards shows, free events, competitions); tree models treat them as NaN.
 - After-midnight end times do not affect the next day's early-morning hours; handle if it matters.
 
 ## 4. Weather check
