@@ -1,0 +1,277 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Freeway 5 Travel Time Forecast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column in a road-signage voice; task card, tables and the chart are the only boxed objects */
+:root{
+  --bg:#f5f7f6; --surface:#ffffff; --ink:#16211c; --muted:#56635d; --line:#d6ddd9;
+  --accent:#15684a; --accent-soft:#e0efe8; --jam:#b8352a; --jam-soft:#f7e2df; --warn:#94600a; --warn-soft:#faefd8;
+  --display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111815; --surface:#18211d; --ink:#e5ece8; --muted:#97a69e; --line:#2b3631;
+  --accent:#5cc49a; --accent-soft:#16302a; --jam:#f0786b; --jam-soft:#3a1d1a; --warn:#e3a94a; --warn-soft:#3a2c14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111815; --surface:#18211d; --ink:#e5ece8; --muted:#97a69e; --line:#2b3631;
+  --accent:#5cc49a; --accent-soft:#16302a; --jam:#f0786b; --jam-soft:#3a1d1a; --warn:#e3a94a; --warn-soft:#3a2c14; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-inline:20px;padding-block:40px 64px;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.6rem;font-weight:600;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+h3{font-size:1.18rem;font-weight:600}
+p{margin:0;max-width:65ch}
+section{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lede{font-size:1.12rem;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:500}
+header{display:flex;flex-direction:column;gap:14px}
+.route{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:1.05rem}
+.route span{background:var(--accent);color:var(--bg);padding:3px 10px;border-radius:4px}
+.route i{font-style:normal;color:var(--muted)}
+.formula{font-family:var(--mono);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 16px;font-size:.95rem;overflow-x:auto}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.grid2>div{min-width:0;display:flex;flex-direction:column;gap:6px}
+.label{font-family:var(--mono);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--bg)}
+td:first-child{font-weight:600;white-space:nowrap}
+figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.chart{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px}
+.chart svg{display:block;width:100%;min-width:520px;height:auto}
+figcaption{font-size:.88rem;color:var(--muted);max-width:65ch}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:18px;height:3px;border-radius:2px;display:inline-block}
+.lesson{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px}
+.lesson div{min-width:0;display:flex;flex-direction:column;gap:6px;padding-left:14px;border-left:3px solid var(--line)}
+.lesson div.yes{border-left-color:var(--accent)}
+.lesson .tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.lesson .yes .tag{color:var(--accent)}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;max-width:65ch}
+li::marker{color:var(--muted)}
+.hyp{display:flex;flex-direction:column;gap:8px}
+.hyp div{display:grid;grid-template-columns:2.6em 1fr;gap:10px}
+.hyp b{font-family:var(--mono);color:var(--accent);font-weight:500}
+.gate{background:var(--accent-soft);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.gate ol{gap:6px}
+.risk{display:flex;flex-direction:column;gap:12px}
+.risk div{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline}
+.pill{font-family:var(--mono);font-size:.74rem;padding:2px 9px;border-radius:999px;white-space:nowrap;justify-self:start;background:var(--warn-soft);color:var(--warn)}
+a{color:var(--accent);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sources{font-size:.88rem;color:var(--muted)}
+.sources li{word-break:break-word}
+footer{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Data Mining HW1 · Topic proposal for team discussion</span>
+  <h1>Forecasting Freeway 5 Southbound Travel Time a Day Ahead to Help Drivers Choose When to Leave</h1>
+  <div class="route"><span>Nangang System IC</span><i>→ Hsuehshan Tunnel →</i><span>Toucheng IC</span></div>
+  <p class="lede">A linear model that predicts, the evening before, how long the drive from Taipei to Yilan will take for each departure time, so drivers can pick a slot that avoids the worst of the tunnel queue.</p>
+  <div class="meta">
+    <span>Report + slides due <b>Mon 2026-10-19 23:59</b></span>
+    <span>Presentation <b>Tue 2026-10-20</b></span>
+    <span>Data <b>Freeway Bureau TDCS (eTag)</b></span>
+  </div>
+</header>
+
+<section>
+  <h2>The pitch</h2>
+  <div class="grid2">
+    <div><span class="label">User</span><p>Drivers heading from greater Taipei to Yilan on weekends and long weekends.</p></div>
+    <div><span class="label">Decision</span><p>The evening before the trip: which departure slot to choose tomorrow.</p></div>
+  </div>
+  <p>Freeway 5 southbound funnels into the Hsuehshan Tunnel, a single bottleneck with almost no practical detour. When demand spikes, the same 30 km can take several times longer than at free flow. Most of that demand is leisure travel, and when it happens is set by the calendar: Friday evenings, the first morning of a long weekend, the eve of a holiday. All of that is known the day before, which is exactly what a feature-based model can use.</p>
+  <div class="formula">Y = travel time, Nangang System → Toucheng, small cars, departing in slot s of day d &nbsp;[minutes]</div>
+</section>
+
+<section>
+  <h2>Why the baseline misses holidays</h2>
+  <figure>
+    <div class="chart">
+      <svg viewBox="0 0 640 250" role="img" aria-label="Illustrative chart of travel time by departure hour. An ordinary Saturday peaks around 45 minutes at 9:00. The first day of a long weekend peaks near 95 minutes at 9:00. The same-slot-last-week baseline follows the ordinary Saturday and misses about 50 minutes at the peak.">
+        <g font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">
+          <line x1="60" y1="40" x2="600" y2="40" stroke="var(--line)"/>
+          <line x1="60" y1="80" x2="600" y2="80" stroke="var(--line)"/>
+          <line x1="60" y1="120" x2="600" y2="120" stroke="var(--line)"/>
+          <line x1="60" y1="160" x2="600" y2="160" stroke="var(--line)"/>
+          <line x1="60" y1="200" x2="600" y2="200" stroke="var(--muted)"/>
+          <text x="52" y="44" text-anchor="end">100</text>
+          <text x="52" y="84" text-anchor="end">80</text>
+          <text x="52" y="124" text-anchor="end">60</text>
+          <text x="52" y="164" text-anchor="end">40</text>
+          <text x="52" y="204" text-anchor="end">20</text>
+          <text x="60" y="218" text-anchor="middle">06:00</text>
+          <text x="161.25" y="218" text-anchor="middle">09:00</text>
+          <text x="262.5" y="218" text-anchor="middle">12:00</text>
+          <text x="363.75" y="218" text-anchor="middle">15:00</text>
+          <text x="465" y="218" text-anchor="middle">18:00</text>
+          <text x="566.25" y="218" text-anchor="middle">21:00</text>
+          <text x="330" y="240" text-anchor="middle">departure time</text>
+          <text x="16" y="120" transform="rotate(-90 16 120)" text-anchor="middle">travel time (min)</text>
+        </g>
+        <polyline fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" points="60,192 93.75,184 127.5,164 161.25,150 195,156 228.75,168 262.5,176 296.25,180 330,180 363.75,184 397.5,186 431.25,188 465,190 498.75,192 532.5,192 566.25,194 600,194"/>
+        <polyline fill="none" stroke="var(--jam)" stroke-width="2.5" points="60,180 93.75,130 127.5,70 161.25,50 195,60 228.75,90 262.5,120 296.25,140 330,150 363.75,160 397.5,168 431.25,176 465,180 498.75,184 532.5,188 566.25,190 600,192"/>
+        <line x1="161.25" y1="50" x2="161.25" y2="150" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="155" y1="50" x2="167" y2="50" stroke="var(--ink)"/>
+        <line x1="155" y1="150" x2="167" y2="150" stroke="var(--ink)"/>
+        <text x="172" y="104" font-size="11" fill="var(--ink)" font-family="IBM Plex Mono, monospace">≈ 50 min missed</text>
+        <circle cx="161.25" cy="50" r="4" fill="var(--jam)"/>
+        <circle cx="161.25" cy="150" r="4" fill="var(--surface)" stroke="var(--muted)" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--jam)"></i>first day of a long weekend</span>
+      <span><i class="sw" style="background:var(--muted)"></i>ordinary Saturday = "same slot last week" baseline</span>
+    </div>
+    <figcaption>Illustrative shape, not real data. The real curves are the first thing we will plot. A forecast built only from last week's travel times copies the ordinary Saturday and misses the holiday peak; calendar features are what close that gap.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Why this topic after the first two</h2>
+  <p>We tested two candidates before this one. Both failed for the same reason: a "nothing changes" baseline already captured most of what was predictable.</p>
+  <div class="lesson">
+    <div><span class="tag">Dropped</span><h3>Runner heart rate</h3><p>Ridge 4.32 vs persistence 4.36 BPM on the test set. Remaining signal was nonlinear (LightGBM did better).</p></div>
+    <div><span class="tag">Dropped</span><h3>MRT ridership + events</h3><p>Too few event days; MAPE in the hour after an event stayed at 40–50%.</p></div>
+    <div class="yes"><span class="tag">This proposal</span><h3>Freeway 5, day ahead</h3><p>No same-day shortcut at a day-ahead horizon, holiday effects known in advance, and hundreds of holiday days across years.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Task card</h2>
+  <div class="tbl"><table>
+    <tr><th>Item</th><th>Definition</th></tr>
+    <tr><td>Target</td><td>Small-car (type 31) travel time from Nangang System IC to Toucheng IC southbound, in minutes; free flow is roughly 20–25 min, holiday peaks far higher</td></tr>
+    <tr><td>One row</td><td>One departure slot (30 or 60 min, to decide) on one day</td></tr>
+    <tr><td>Known at</td><td>18:00 the day before: calendar, holiday structure, announced traffic measures, travel times up to that evening</td></tr>
+    <tr><td>Excluded</td><td>Any travel time or volume observed on the target day; observed weather on the target day</td></tr>
+    <tr><td>Period</td><td>Several recent years, skipping 2020–2022 pandemic disruption; exact range depends on what the download site still serves</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Data</h2>
+  <p>The Freeway Bureau's open traffic database publishes eTag-based data free of charge, with history back to 2014 when distance-based tolling began. The site keeps recent years online; older years must be requested from the Bureau.</p>
+  <div class="tbl"><table>
+    <tr><th>Table</th><th>Content</th><th>Use</th></tr>
+    <tr><td>M04A</td><td>Median travel time between adjacent gantries, by vehicle type, every 5 minutes</td><td>Target: sum the gantry pairs along the route</td></tr>
+    <tr><td>M03A</td><td>Vehicle counts per gantry, by vehicle type, every 5 minutes</td><td>Lagged demand features (previous days only)</td></tr>
+  </table></div>
+  <h3>Practical notes</h3>
+  <ul>
+    <li>One compressed file per day, about 4 MB; filter to the route's gantry pairs right after download.</li>
+    <li>The site asks users to wait at least 40 seconds between repeated requests, so the downloader must throttle.</li>
+    <li>Summing segment times from the same 5-minute slot is a simplification of the true trip time; we will state it as a limitation.</li>
+    <li>Gantry IDs for the route come from the Bureau's gantry list. Missing segments get imputed or the slot is dropped, with the rule documented.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Features</h2>
+  <p>Peak timing changes with the type of day, so the core of the model is departure slot × day type. These are one-hot interactions, which keeps the model linear in its coefficients.</p>
+  <div class="tbl"><table>
+    <tr><th>Group</th><th>Features</th><th>Why it should help</th></tr>
+    <tr><td>Calendar</td><td>Departure slot; weekday; slot × weekday</td><td>Baseline weekly rhythm</td></tr>
+    <tr><td>Holiday structure</td><td>Day index within a long weekend (first, middle, last); eve of holiday; holiday length; make-up workday; school vacation</td><td>Leisure demand is set by the calendar and is known in advance</td></tr>
+    <tr><td>Interactions</td><td>Slot × holiday day type</td><td>A first-day morning peak and a Friday-evening peak happen at different hours</td></tr>
+    <tr><td>History</td><td>Same slot last week; mean of last four same weekdays; same holiday day last year</td><td>Level of recent demand and long-term trend</td></tr>
+    <tr><td>Traffic measures</td><td>Holiday traffic-management measures announced in advance (if any apply on the day)</td><td>Announced measures change capacity or demand and are public the day before</td></tr>
+  </table></div>
+  <p>Travel time grows sharply once the tunnel saturates, so we will also try modelling log(travel time), which turns multiplicative holiday effects into additive ones.</p>
+  <h3>Hypotheses to test</h3>
+  <div class="hyp">
+    <div><b>H1</b><span>The first morning of a long weekend is much slower than an ordinary Saturday at the same hour.</span></div>
+    <div><b>H2</b><span>The last day of a long weekend barely affects southbound traffic, since return trips go north.</span></div>
+    <div><b>H3</b><span>The eve of a holiday raises evening travel time well beyond an ordinary Friday.</span></div>
+    <div><b>H4</b><span>Longer holidays spread demand, so the first-day peak per day is lower for 4+ day breaks than for 3-day breaks.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Models, validation and metrics</h2>
+  <div class="grid2">
+    <div>
+      <h3>Models</h3>
+      <ul>
+        <li><b>Final model:</b> Ridge with slot × day-type interactions (many correlated dummies)</li>
+        <li><b>Trivial:</b> training mean per slot × weekday; same slot last week</li>
+        <li><b>Simple:</b> same holiday day last year</li>
+        <li><b>Strong:</b> gradient boosting on the same inputs</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Metrics</h3>
+      <ul>
+        <li>MAE and RMSE in minutes</li>
+        <li>Results by slice: ordinary weekdays, weekends, each holiday day type</li>
+        <li>Decision metric: minutes lost by leaving in the slot the model recommends, compared with the truly fastest slot in the same window</li>
+        <li>Threshold set relative to the best baseline, not a fixed number</li>
+      </ul>
+    </div>
+  </div>
+  <h3>Split</h3>
+  <p>Strictly by time: earlier years for training with TimeSeriesSplit inside them, the most recent full year held out as the test set and used once. A full test year covers every holiday type once. Coefficient tests use HAC (Newey–West) errors because neighbouring slots are correlated.</p>
+</section>
+
+<section>
+  <h2>Go / no-go check by Wed 10/7</h2>
+  <div class="gate">
+    <p>Before committing, we run one quick test on a single year:</p>
+    <ol>
+      <li>Download one year of M04A and build hourly southbound travel times for the route.</li>
+      <li>Fit Ridge with calendar and holiday features only.</li>
+      <li><b>Go</b> if holiday-day MAE is at least 20% lower than "same slot last week", and ordinary days are not worse.</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <h2>Risks</h2>
+  <div class="risk">
+    <div><span class="pill">data</span><span>Gantry gaps and summing errors along the route; needs a clear imputation rule.</span></div>
+    <div><span class="pill">signal</span><span>Accidents and roadworks cause large errors that no day-ahead feature can see. These become the error-analysis cases in §8.</span></div>
+    <div><span class="pill">drift</span><span>Traffic-management policy can change between years; check the Bureau's holiday announcements for the study period.</span></div>
+    <div><span class="pill">time</span><span>Downloading several years with throttling takes hours; start the download as soon as the topic is approved.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Related work to cite</h2>
+  <ul>
+    <li>Fan et al. (2018), <i>Using machine learning and big data approaches to predict travel time based on historical and real-time data from Taiwan electronic toll collection</i>, Soft Computing. Random forests on Taiwan eTag data.</li>
+    <li><i>A Simple and Effective Method for Predicting Travel Times on Freeways</i>. Linear regression with time-varying coefficients; supports our choice of a linear model.</li>
+    <li><i>Biogeography-Based Optimization and Support Vector Regression for Freeway Travel Time Prediction and Feature Selection</i> (arXiv 2007.15212). Freeway 1 data with eTag travel time and rainfall.</li>
+    <li><i>Analyzing Taiwanese traffic patterns on consecutive holidays</i> (arXiv 2307.09537). Supports the holiday-structure features.</li>
+    <li>Most prior Taiwan studies use Freeway 1 commuter corridors with short horizons. Our angle: a holiday-driven bottleneck, day-ahead forecasts, and a departure-choice metric. Check every reference on the publisher's page before citing.</li>
+  </ul>
+</section>
+
+<section class="sources">
+  <h3>Sources</h3>
+  <ul>
+    <li><a href="https://tisvcloud.freeway.gov.tw/">Freeway Bureau traffic database</a></li>
+    <li><a href="https://tisvcloud.freeway.gov.tw/history/TDCS/M04A/">M04A history download directory</a></li>
+    <li><a href="https://www.freeway.gov.tw/UserFiles/TDCS%20operaion%20manual.pdf">TDCS user manual (PDF)</a></li>
+    <li><a href="https://data.gov.tw/dataset/37757">Open data platform note on TDCS history availability</a></li>
+    <li><a href="https://link.springer.com/article/10.1007/s00500-017-2610-y">Fan et al., Soft Computing 2018</a></li>
+    <li><a href="https://www.researchgate.net/publication/3427884_A_Simple_and_Effective_Method_for_Predicting_Travel_Times_on_Freeways">A Simple and Effective Method for Predicting Travel Times on Freeways</a></li>
+    <li><a href="https://arxiv.org/pdf/2007.15212">BBO and SVR for Freeway Travel Time Prediction (arXiv)</a></li>
+    <li><a href="https://arxiv.org/pdf/2307.09537">Analyzing Taiwanese traffic patterns on consecutive holidays (arXiv)</a></li>
+  </ul>
+</section>
+
+<footer>Draft for team discussion · prepared 2026-10-04</footer>
+</div>
+
+</body></html>
