@@ -18,7 +18,13 @@ Variants (`train_variants.py` → `variant_results.csv`, features = C, test MAE)
 - Per-event-type models are worse everywhere (event segments have only ~1.3–3.3k training rows); keep one global model with the type flags.
 - Poisson loss cuts the end-hour error ~8% (valid 936→911, test 983→907) but is slightly worse on ordinary hours (L1 targets the median);
   averaging L1 and Poisson gives the best overall MAE. Candidate: use Poisson (or the blend) as the main model since end hours matter most.
-- Next ideas: Tweedie/log-target, tune num_leaves/min_child_samples, sample weights for event hours, peak-hour specific evaluation (peak error is still ~900).
+- Tweedie / log target / tuning (`tune_models.py` → `loss_results.csv`, `tuning_trials.csv`, `tuned_results.csv`; test MAE all / event / end hour(+1)):
+  L1 111.3/193.0/982.5; Poisson 112.1/192.3/906.9; Tweedie p=1.1 114.2/196.6/909.0 (p≥1.3 gets worse, p=1.8 is bad); log1p+L2 114.3/194.7/926.2;
+  log1p+L1 110.0/191.0/1011.2 (best on all hours, worst at end hour). Tweedie does not beat Poisson.
+- Random search (24 trials, selected on valid) did not help: tuned Tweedie test end hour 909→936 (worse), tuned L1 983→941 (better), blend(tuned Tweedie, tuned L1) 108.9/191.0/919.6.
+  Valid end-hour MAE across all 24 trials spans 900–953 with no clear pattern: with only ~360 valid / ~117 test end-hour rows, differences of a few % are noise.
+  Conclusion: stay with default params; Poisson (or the Poisson+L1 blend) is the main candidate. Further loss/param tuning is not worth it.
+- Next ideas: sample weights for event hours, repeated/rolling-origin evaluation for stable end-hour estimates, better event features (see section 3), then a day-ahead pipeline with forecast weather (section 4).
 Original plan:
 - Time-based split, no shuffling. Example (not decided): train 2018–2019 + 2023, validate 2024–2025, test 2026.
 - Baseline A: calendar/time features + weather + lags only. Baseline B: A + event features. Compare, especially on event evenings, since that is what staff care about.
