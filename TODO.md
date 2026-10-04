@@ -1,8 +1,14 @@
 # TODO
 
-Status: the modelling table `master.parquet` is built (49,656 hourly rows, 2018–2019 and 2023–2026-08). No model has been trained yet.
+Status: the modelling table `master.parquet` is built (49,656 hourly rows, 2018–2019 and 2023–2026-08). Baselines are trained (`train_baseline.py` → `baseline_results.csv`).
 
-## 1. Baseline models (next)
+## 1. Baseline models (done; refine next)
+Result (MAE, test 2026; split train 2018–19+2023 / valid 2024–25 / test 2026):
+all hours: lag_7d 202.8 → LGBM A 123.1 → LGBM B (+events) 111.9; event days 327→223→195;
+end hour(+1): 1368→1363→1013. Event features help most at the end hour but the error there is still large
+(~1000 people/hour): next try capacity/ticket counts, event-type-specific models, quantile/Poisson loss, tuning.
+Notes: early stopping uses the valid set, so valid scores are slightly optimistic; test is clean.
+Original plan:
 - Time-based split, no shuffling. Example (not decided): train 2018–2019 + 2023, validate 2024–2025, test 2026.
 - Baseline A: calendar/time features + weather + lags only. Baseline B: A + event features. Compare, especially on event evenings, since that is what staff care about.
 - Candidate model: LightGBM (installed in `metro-forecast`); also try a plain "same hour last week" baseline.
