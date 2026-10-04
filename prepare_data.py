@@ -11,11 +11,12 @@ from multiprocessing import Pool
 from scipy.signal import medfilt
 
 SRC = "data/endomondoHR_proper.json"
-OUT = "data/rows"
+OUT = os.environ.get("OUT_DIR", "data/rows")
+SPEED_SMOOTH = os.environ.get("SPEED_SMOOTH", "mean")   # "mean" (30 s backward mean) or "median" (30 s backward median)
 STEP = 10            # seconds per grid step
 HORIZON = 6          # steps ahead -> 60 s
 MAX_GAP = 30         # seconds; bracketing raw points further apart than this make the grid point invalid
-STRIDE = 3           # keep every 3rd valid row (30 s) to limit autocorrelated rows
+STRIDE = int(os.environ.get("STRIDE", 3))           # keep every 3rd valid row (30 s) to limit autocorrelated rows
 V_MAX = 9.0          # m/s, faster than any recreational runner -> GPS jump
 HR_MIN, HR_MAX = 40, 220
 SPIKE = 25           # bpm away from a 5-point median -> sensor spike
@@ -71,7 +72,8 @@ def process(line):
     hr_g, alt_g, dist_g = f(hr), f(alt), f(dist)
     sp = np.full(len(tg), np.nan); sp[1:] = np.diff(dist_g) / STEP          # m/s, NaN if either end is invalid
     s = pd.Series(sp)
-    speed = s.rolling(3, min_periods=3).mean().values                       # backward 30 s mean
+    roll = s.rolling(3, min_periods=3)
+    speed = (roll.median() if SPEED_SMOOTH == "median" else roll.mean()).values  # backward 30 s smoothing of noisy GPS speed
     ema = s.ewm(halflife=3, ignore_na=False).mean().values                  # halflife 30 s
     alt_s = pd.Series(alt_g).rolling(3, min_periods=3).mean().values
     dd = dist_g - lag(dist_g, 3)
@@ -89,7 +91,10 @@ def process(line):
     X["speed_x_grade"] = X.speed * X.grade
     X["elapsed_x_speed"] = X.elapsed_s * X.speed
     X["dhr"] = X.hr_future - X.hr
-    X = X.iloc[::STRIDE].dropna()
+    v = pd.Series(valid.astype(float))                                      # no data gap anywhere in [t-60 s, t+60 s]
+    contiguous = ((v.rolling(HORIZON + 1, min_periods=HORIZON + 1).min() == 1)
+                  & (v[::-1].rolling(HORIZON + 1, min_periods=HORIZON + 1).min()[::-1] == 1)).values
+    X = X[contiguous].iloc[::STRIDE].dropna()
     if X.empty: return None, "no_valid_rows"
     X.insert(0, "start_ts", int(t[0])); X.insert(0, "workout_id", int(d.get("id", -1)))
     X.insert(0, "gender", d.get("gender", "unknown")); X.insert(0, "userId", int(d["userId"]))
@@ -128,5 +133,5 @@ if __name__ == "__main__":
                 df = df.astype({c: "float32" for c in df.columns if df[c].dtype == "float64"})
                 df.to_parquet(f"{OUT}/shard_{k:04d}.parquet"); rows += len(df); k += 1
             if k % 20 == 0: print(f"shards {k} rows {rows:,} {dict(total)}", flush=True)
-    json.dump({"rows": rows, "workouts": dict(total)}, open("data/prepare_stats.json", "w"), indent=1)
+    json.dump({"rows": rows, "workouts": dict(total)}, open(OUT.rstrip("/") + "_stats.json", "w"), indent=1)
     print("done", rows, dict(total))

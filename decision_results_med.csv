@@ -1,0 +1,37 @@
+﻿zone,zone_width_median_BPM,event,model,threshold,margin_BPM,n_in_zone,base_rate_%,precision,recall,F1,AUC
+q25-q75,15.6,up-exit,persistence,strict (margin 0),0.0,738409,9.1,,0.0,0.0,0.786
+q25-q75,15.6,up-exit,persistence,tuned margin,3.0,738409,9.1,0.288,0.538,0.376,0.786
+q25-q75,15.6,up-exit,extrapolation,tuned margin,2.5,738409,9.1,0.312,0.47,0.375,0.784
+q25-q75,15.6,up-exit,ridge_raw,tuned margin,3.0,738409,9.1,0.285,0.482,0.358,0.781
+q25-q75,15.6,up-exit,ridge_all,tuned margin,3.0,738409,9.1,0.296,0.499,0.372,0.786
+q25-q75,15.6,up-exit,lgbm_all,tuned margin,2.5,738409,9.1,0.329,0.504,0.398,0.801
+q25-q75,15.6,down-exit,persistence,strict (margin 0),0.0,738409,11.2,,0.0,0.0,0.753
+q25-q75,15.6,down-exit,persistence,tuned margin,3.0,738409,11.2,0.284,0.529,0.369,0.753
+q25-q75,15.6,down-exit,extrapolation,tuned margin,2.5,738409,11.2,0.3,0.488,0.371,0.752
+q25-q75,15.6,down-exit,ridge_raw,tuned margin,3.5,738409,11.2,0.268,0.511,0.351,0.743
+q25-q75,15.6,down-exit,ridge_all,tuned margin,3.5,738409,11.2,0.285,0.536,0.372,0.76
+q25-q75,15.6,down-exit,lgbm_all,tuned margin,3.0,738409,11.2,0.314,0.517,0.39,0.775
+q35-q65,8.7,up-exit,persistence,strict (margin 0),0.0,444306,16.7,,0.0,0.0,0.719
+q35-q65,8.7,up-exit,persistence,tuned margin,3.0,444306,16.7,0.306,0.618,0.409,0.719
+q35-q65,8.7,up-exit,extrapolation,tuned margin,2.5,444306,16.7,0.331,0.55,0.413,0.72
+q35-q65,8.7,up-exit,ridge_raw,tuned margin,3.0,444306,16.7,0.294,0.608,0.396,0.708
+q35-q65,8.7,up-exit,ridge_all,tuned margin,2.5,444306,16.7,0.328,0.558,0.413,0.722
+q35-q65,8.7,up-exit,lgbm_all,tuned margin,2.0,444306,16.7,0.372,0.533,0.438,0.746
+q35-q65,8.7,down-exit,persistence,strict (margin 0),0.0,444306,18.2,,0.0,0.0,0.698
+q35-q65,8.7,down-exit,persistence,tuned margin,3.0,444306,18.2,0.306,0.619,0.409,0.698
+q35-q65,8.7,down-exit,extrapolation,tuned margin,2.5,444306,18.2,0.321,0.583,0.414,0.7
+q35-q65,8.7,down-exit,ridge_raw,tuned margin,3.0,444306,18.2,0.3,0.575,0.395,0.684
+q35-q65,8.7,down-exit,ridge_all,tuned margin,3.0,444306,18.2,0.317,0.61,0.417,0.709
+q35-q65,8.7,down-exit,lgbm_all,tuned margin,2.5,444306,18.2,0.356,0.576,0.44,0.734
+q15-q85,24.2,up-exit,persistence,strict (margin 0),0.0,1043721,4.8,,0.0,0.0,0.836
+q15-q85,24.2,up-exit,persistence,tuned margin,2.5,1043721,4.8,0.286,0.459,0.353,0.836
+q15-q85,24.2,up-exit,extrapolation,tuned margin,2.5,1043721,4.8,0.291,0.431,0.348,0.832
+q15-q85,24.2,up-exit,ridge_raw,tuned margin,3.5,1043721,4.8,0.263,0.465,0.336,0.833
+q15-q85,24.2,up-exit,ridge_all,tuned margin,3.0,1043721,4.8,0.295,0.408,0.342,0.834
+q15-q85,24.2,up-exit,lgbm_all,tuned margin,2.5,1043721,4.8,0.314,0.454,0.371,0.843
+q15-q85,24.2,down-exit,persistence,strict (margin 0),0.0,1043721,6.6,,0.0,0.0,0.792
+q15-q85,24.2,down-exit,persistence,tuned margin,3.0,1043721,6.6,0.257,0.468,0.331,0.792
+q15-q85,24.2,down-exit,extrapolation,tuned margin,2.5,1043721,6.6,0.276,0.424,0.335,0.79
+q15-q85,24.2,down-exit,ridge_raw,tuned margin,4.0,1043721,6.6,0.237,0.464,0.314,0.785
+q15-q85,24.2,down-exit,ridge_all,tuned margin,4.0,1043721,6.6,0.253,0.476,0.33,0.796
+q15-q85,24.2,down-exit,lgbm_all,tuned margin,3.0,1043721,6.6,0.302,0.408,0.347,0.805

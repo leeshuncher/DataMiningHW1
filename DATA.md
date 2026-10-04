@@ -8,12 +8,12 @@ Rebuild: download the file into `data/`, then `python prepare_data.py` and `pyth
 1. `prepare_data.py` keeps `sport == "run"` (70,591 workouts). Per workout: drop non-increasing timestamps; drop GPS jumps (implied > 9 m/s);
    drop HR outside 40–220 and spikes (> 25 bpm from a 5-point median); skip workouts with flat HR (std < 3); derive speed from GPS distance
    (the raw `speed` field is not used); resample to a 10 s grid, grid points inside gaps > 30 s are invalid; build features from the past only
-   and the target HR(t+60 s); keep every 3rd valid row (30 s). Result: 69,256 workouts, 8,035,452 rows (`prepare_stats.json` lists the dropped ones).
-2. `build_table.py` keeps runners with >= 10 workouts (633 runners, 68,670 workouts, 7,973,405 rows), splits per runner by time and adds the HR-gap feature.
+   and the target HR(t+60 s); keep every 3rd valid row (30 s). A row needs valid (no >30 s gap) data over the whole window [t-60 s, t+60 s], so the 60 s horizon is a real 60 s. Result: about 69.2k workouts, 7.98M rows (`prepare_stats.json` lists the dropped ones).
+2. `build_table.py` keeps runners with >= 10 workouts (633 runners, 68,645 workouts, 7,914,818 rows), splits per runner by time and adds the HR-gap feature.
 
 ## Split
-Per runner, the earliest 80% of workouts are `train`, the latest 20% `test` (whole workouts). train: 55,181 workouts / 6,391,356 rows;
-test: 13,489 workouts / 1,582,049 rows. Use `workout_id` as the group in GroupKFold inside train; touch test once.
+Per runner, the earliest 80% of workouts are `train`, the latest 20% `test` (whole workouts). train: 55,161 workouts / 6,344,878 rows;
+test: 13,484 workouts / 1,569,940 rows. Use `workout_id` as the group in GroupKFold inside train; touch test once.
 
 ## Columns of `data/modeling_table.parquet`
 | column | meaning |
@@ -35,9 +35,11 @@ test: 13,489 workouts / 1,582,049 rows. Use `workout_id` as the group in GroupKF
 
 No whole-workout statistics are used. Every feature uses only values at or before t.
 
+See `ANALYSIS.md` for the slice analysis, decision-level metrics and the feature audit.
+
 ## Caveats (see `data_report.json`)
-- **Persistence is already strong:** test MAE of "HR stays the same" is 4.36 BPM, so the proposed threshold MAE <= 5 BPM is met by the trivial baseline.
-  A first Ridge check on all features gets 4.32 BPM (R² 0.10 on dhr). Gains only show on slices: pace change (|dspeed60| > 0.5, 14% of rows) 7.50 → 7.25, hills (|grade| > 0.05) 5.91 → 5.81.
+- **Persistence is already strong:** test MAE of "HR stays the same" is 4.33 BPM, so the proposed threshold MAE <= 5 BPM is met by the trivial baseline.
+  A first Ridge check on all features gets 4.29 BPM. Gains only show on slices: pace change (|dspeed60| > 0.5, 14% of rows) 7.50 → 7.25, hills (|grade| > 0.05) 5.91 → 5.81.
   Frame the claim around those slices and the decision accuracy, not overall MAE.
 - Correlation of dhr with hr_gap is 0.19 and with hr_slope60 is −0.19 (mean reversion); with dspeed60 it is only 0.03 overall.
 - `hr_gap` train rows are in their own steady-state fit (slightly optimistic); test rows are clean.

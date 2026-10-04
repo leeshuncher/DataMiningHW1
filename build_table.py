@@ -8,14 +8,15 @@
   Runners with too few steady rows fall back to the global train fit (gap_source = "global").
   Note: train rows are in their own fit, so their gap is slightly optimistic; test rows are clean.
 Run `python build_table.py` after prepare_data.py."""
-import glob, json
+import glob, json, os
 import numpy as np, pandas as pd
 
+ROWS = os.environ.get("OUT_DIR", "data/rows"); TAG = os.environ.get("TABLE_TAG", "")
 MIN_WORKOUTS = 10
 TRAIN_FRAC = 0.8
 MIN_STEADY_ROWS = 100
 
-df = pd.concat((pd.read_parquet(f) for f in sorted(glob.glob("data/rows/shard_*.parquet"))), ignore_index=True)
+df = pd.concat((pd.read_parquet(f) for f in sorted(glob.glob(f"{ROWS}/shard_*.parquet"))), ignore_index=True)
 n_before = (df.userId.nunique(), df.workout_id.nunique(), len(df))
 wk = df.groupby(["userId", "workout_id"], as_index=False).start_ts.first()
 cnt = wk.groupby("userId").size()
@@ -46,7 +47,7 @@ df["hr_gap"] = (df.hr_ss_expected - df.hr).astype("float32")
 df["gap_source"] = np.where(use_user, "user", "global")
 df["gender"] = df.gender.astype("category")
 df = df.sort_values(["userId", "start_ts", "elapsed_s"]).reset_index(drop=True)
-df.to_parquet("data/modeling_table.parquet")
+df.to_parquet(f"data/modeling_table{TAG}.parquet")
 df.sample(3000, random_state=0).sort_values(["userId", "start_ts", "elapsed_s"]).to_csv("sample_rows.csv", index=False)
 
 # ---- report ----
@@ -70,5 +71,5 @@ rep = {
     "corr_dhr_dspeed60_test": float(te.dhr.corr(te.dspeed60)),
     "corr_dhr_hr_slope60_test": float(te.dhr.corr(te.hr_slope60)),
 }
-json.dump(rep, open("data/table_report.json", "w"), indent=1)
+json.dump(rep, open(f"data/table_report{TAG}.json", "w"), indent=1)
 for k, v in rep.items(): print(k, v)
