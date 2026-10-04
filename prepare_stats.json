@@ -1,0 +1,11 @@
+{
+ "rows": 8035452,
+ "workouts": {
+  "ok": 69256,
+  "gps_jumps": 934,
+  "flat_hr": 254,
+  "too_few_grid_points": 10,
+  "no_valid_rows": 30,
+  "bad_hr": 107
+ }
+}

@@ -1,0 +1,39 @@
+{
+ "users_before/after": [
+  798,
+  633
+ ],
+ "workouts_before/after": [
+  69256,
+  68670
+ ],
+ "rows_before/after": [
+  8035452,
+  7973405
+ ],
+ "rows_train/test": [
+  6391356,
+  1582049
+ ],
+ "workouts_train/test": [
+  55181,
+  13489
+ ],
+ "users_with_own_gap_fit": 602,
+ "global_fit(a,b)": [
+  118.6151351928711,
+  9.927106857299805
+ ],
+ "target_dhr_std_train/test": [
+  7.317100524902344,
+  7.339766979217529
+ ],
+ "test_MAE_persistence(dhr=0)": 4.359275817871094,
+ "test_MAE_train_mean_dhr": 4.3548264503479,
+ "test_MAE_persistence_on_|dspeed60|>0.5": 7.498288631439209,
+ "test_MAE_persistence_on_|grade|>0.05": 5.90925407409668,
+ "share_test_rows_|dspeed60|>0.5": 0.1385134088767162,
+ "corr_dhr_hr_gap_test": 0.187521463856568,
+ "corr_dhr_dspeed60_test": 0.025412924560402814,
+ "corr_dhr_hr_slope60_test": -0.1851462606383777
+}
