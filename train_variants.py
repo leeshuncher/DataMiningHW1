@@ -1,8 +1,10 @@
-"""Variants on feature set C (BASE+EVENT+PRICE): L1 vs Poisson loss, global vs per-event-type models.
+"""[Legacy 3-way split: train 2018-19+2023 / valid 2024-25 / test 2026; kept so earlier results reproduce.]
+Variants on feature set C (BASE+EVENT+PRICE): L1 vs Poisson loss, global vs per-event-type models.
 Same split as train_baseline.py (train 2018-19+2023, valid 2024-25, test 2026)."""
 import warnings; warnings.filterwarnings("ignore")
 import numpy as np, pandas as pd, lightgbm as lgb
 exec(open("train_baseline.py", encoding="utf-8").read().split("def fit_predict")[0])  # df, split, BASE/EVENT/PRICE, mk
+df["split"] = np.select([df.datetime.dt.year.isin([2018, 2019, 2023]), df.datetime.dt.year.isin([2024, 2025])], ["train", "valid"], "test")  # legacy 3-way split
 
 COLS = BASE + EVENT + PRICE
 X = mk(COLS)

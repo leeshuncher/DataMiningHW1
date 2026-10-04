@@ -1,6 +1,7 @@
 import warnings; warnings.filterwarnings("ignore")
 import numpy as np, pandas as pd, lightgbm as lgb
 exec(open("train_baseline.py", encoding="utf-8").read().split("def fit_predict")[0])
+df["split"] = np.select([df.datetime.dt.year.isin([2018, 2019, 2023]), df.datetime.dt.year.isin([2024, 2025])], ["train", "valid"], "test")  # legacy 3-way split
 X = mk(BASE + EVENT + PRICE); y = df.entries.values
 tr, va = (df.split == "train").values, (df.split == "valid").values
 p = dict(objective="regression_l1", metric="l1", learning_rate=0.03, num_leaves=31, min_child_samples=20, subsample=0.8,

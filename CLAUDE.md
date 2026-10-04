@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Forecast **hourly 進站 (entry) counts at 台北小巨蛋 station for the next day**, to help station staff plan staffing/ticket booths/crowd control on event nights. Inputs must be things known at prediction time: date/hour, weather, same-hour last week, and the event schedule (start/end time). Baselines are in `train_baseline.py` (results in `baseline_results.csv`); `python` needs pandas/lightgbm/pyarrow.
+Forecast **hourly 進站 (entry) counts at 台北小巨蛋 station for the next day**, to help station staff plan staffing/ticket booths/crowd control on event nights. Inputs must be things known at prediction time: date/hour, weather, same-hour last week, and the event schedule (start/end time). Split: train 2018–2025 / test 2026-01..08 (no validation set; tree count picked on an inner 2025 hold-out). Baselines are in `train_baseline.py` (results in `baseline_results.csv`); `python` needs pandas/lightgbm/pyarrow.
 
 ## Environment and commands
 

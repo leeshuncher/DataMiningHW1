@@ -1,8 +1,10 @@
-"""Tweedie / log1p-target variants, then a small random search on the best loss.
+"""[Legacy 3-way split: train 2018-19+2023 / valid 2024-25 / test 2026; kept so earlier results reproduce.]
+Tweedie / log1p-target variants, then a small random search on the best loss.
 Selection uses the VALID set only (2024-25); test (2026) is reported once at the end."""
 import warnings; warnings.filterwarnings("ignore")
 import time, numpy as np, pandas as pd, lightgbm as lgb
 exec(open("train_baseline.py", encoding="utf-8").read().split("def fit_predict")[0])
+df["split"] = np.select([df.datetime.dt.year.isin([2018, 2019, 2023]), df.datetime.dt.year.isin([2024, 2025])], ["train", "valid"], "test")  # legacy 3-way split
 
 X = mk(BASE + EVENT + PRICE)
 y = df.entries.values

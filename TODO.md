@@ -1,5 +1,11 @@
 # TODO
 
+**Split changed (latest): train 2018–2025 (2020–22 excluded in master), test 2026-01..08, no validation set.** `train_baseline.py` and `eval_mape.py`
+pick the number of trees on an inner hold-out (2025, fitted on ≤2024) and refit on all of train. Latest test MAE (all / event day / end hour(+1)):
+lag_7d 202.8/327.2/1367.6, A 116.8/220.0/1390.6, B 104.5/186.2/980.0, C 102.9/182.2/938.3, D 103.6/184.6/968.9. With this split the Poisson
+advantage at end hours disappeared (end-hour WAPE: L1 40.7, Poisson 41.3, blend 40.1), consistent with the earlier "differences are noise" note.
+`train_variants.py`, `tune_models.py`, `diag_end.py` still use the legacy 3-way split (train 2018-19+2023 / valid 2024-25 / test 2026); the numbers below this note come from that split.
+
 Status: the modelling table `master.parquet` is built (49,656 hourly rows, 2018–2019 and 2023–2026-08). Baselines are trained (`train_baseline.py` → `baseline_results.csv`).
 
 ## 1. Baseline models (done; refine next)

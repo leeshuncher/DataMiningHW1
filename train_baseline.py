@@ -1,5 +1,6 @@
 """Baselines: same-hour-last-week vs LightGBM A (no events) vs B (+ official event features).
-Time split: train 2018-19 + 2023, valid 2024-25, test 2026."""
+Time split: train 2018-2025 (2020-22 excluded in master), test 2026-01..08. No validation set: the number of trees is
+chosen on an inner hold-out (2025, fitted on <=2024), then the model is refit on all of train with that many trees."""
 import numpy as np
 import pandas as pd
 import lightgbm as lgb
@@ -7,7 +8,7 @@ import lightgbm as lgb
 df = pd.read_parquet("master.parquet").reset_index()
 df = df[df.has_record].copy()
 y = df.datetime.dt.year
-split = np.select([y.isin([2018, 2019, 2023]), y.isin([2024, 2025])], ["train", "valid"], "test")
+split = np.where(y <= 2025, "train", "test")
 df["split"] = split
 
 BASE = ["hour", "dow", "month", "is_holiday", "is_makeup_workday", "is_day_before_holiday",
@@ -30,13 +31,16 @@ def mk(cols):
 
 def fit_predict(cols):
     X = mk(cols)
-    tr, va = df.split == "train", df.split == "valid"
+    tr, test_ = (df.split == "train"), (df.split == "test")
+    inner_tr, inner_va = tr & (y <= 2024), tr & (y == 2025)
     p = dict(objective="regression_l1", learning_rate=0.03, num_leaves=31, min_child_samples=20,
-             subsample=0.8, subsample_freq=1, colsample_bytree=0.8, verbose=-1, n_estimators=3000)
-    m = lgb.LGBMRegressor(**p)
-    m.fit(X[tr], df.entries[tr], eval_set=[(X[va], df.entries[va])],
-          callbacks=[lgb.early_stopping(100, verbose=False)])
-    print(f"  best_iter={m.best_iteration_}")
+             subsample=0.8, subsample_freq=1, colsample_bytree=0.8, verbose=-1)
+    m0 = lgb.LGBMRegressor(n_estimators=3000, **p)
+    m0.fit(X[inner_tr], df.entries[inner_tr], eval_set=[(X[inner_va], df.entries[inner_va])],
+           callbacks=[lgb.early_stopping(100, verbose=False)])
+    n = int(m0.best_iteration_ * 1.1)  # a bit more data when refitting
+    print(f"  inner best_iter={m0.best_iteration_}, refit with {n}")
+    m = lgb.LGBMRegressor(n_estimators=n, **p).fit(X[tr], df.entries[tr])
     return np.clip(m.predict(X), 0, None), m
 
 preds = {"lag_7d": df.lag_7d.fillna(df.lag_mean_4w).fillna(0).values}
@@ -50,7 +54,7 @@ masks = {"all": df.entries == df.entries,
          "non_event_day": ~df.event_today,
          "end_hour(+1)": df.is_end_hour | df.is_post_end_hour}
 rows = []
-for s in ["valid", "test"]:
+for s in ["test"]:
     for mn, mk_ in masks.items():
         sel = (df.split == s) & mk_
         for name, p in preds.items():
