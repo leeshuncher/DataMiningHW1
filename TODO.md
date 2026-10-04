@@ -25,6 +25,17 @@ Variants (`train_variants.py` → `variant_results.csv`, features = C, test MAE)
   Valid end-hour MAE across all 24 trials spans 900–953 with no clear pattern: with only ~360 valid / ~117 test end-hour rows, differences of a few % are noise.
   Conclusion: stay with default params; Poisson (or the Poisson+L1 blend) is the main candidate. Further loss/param tuning is not worth it.
 - Next ideas: sample weights for event hours, repeated/rolling-origin evaluation for stable end-hour estimates, better event features (see section 3), then a day-ahead pipeline with forecast weather (section 4).
+
+End-hour diagnosis (`diag_end.py` → `end_hour_diag.csv`; 59 test event days, window = end hour-1..+2, L1 model C):
+- Median |error| of the window total is 27%, corr(pred, actual) only 0.49; the actual window total itself varies only ±32% (CV) around its mean,
+  so the model is barely better than "predict the average event". The model cannot tell a big show from a small one.
+- Concerts are under-predicted by ~26% on average (pred 4,945 vs actual 6,702); the worst days are -40..-55%.
+- Predicted peak hour equals the actual one on only 54% of days (41% are off by one hour; end-time estimate error splits the spike).
+- Outlier: 2026-07-11 actual 420 vs pred 5,677 (probably cancelled/postponed; not reflected in the official page).
+- Tried past-event size features (`prev_event_win`, `prev3_event_win`, `prev_type_win`: end-window entries of event days >=7 days earlier, in `build_master.py`):
+  no gain (model D end-hour(+1) test MAE 994.8 vs 982.5 for C); their correlation with the target event's size is only 0.05–0.2. Kept in master but unused by the best model.
+- What would actually help: information about THIS event's size/artist — same-artist/series history (needs artist name matching), ticket sales/sold-out status from
+  platforms, or announced session count/seat map. Also a better end-time estimate.
 Original plan:
 - Time-based split, no shuffling. Example (not decided): train 2018–2019 + 2023, validate 2024–2025, test 2026.
 - Baseline A: calendar/time features + weather + lags only. Baseline B: A + event features. Compare, especially on event evenings, since that is what staff care about.

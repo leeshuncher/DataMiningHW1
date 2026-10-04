@@ -49,6 +49,22 @@ df["is_post_end_hour"] = df["rel_end_h"] == 1
 
 # exclude 2017 (lags incomplete) and 2020-2022 (COVID); done after the lags so 2023+ lags still see 2022 values
 df = df[~df.index.year.isin([2017, 2020, 2021, 2022])]
+# past-event size features: entries in the end window (end hour-1 .. end hour+2) of earlier event days.
+# Only event days >= 7 days before the target day are used (same rule as the lags); COVID years are already dropped.
+win = {}
+for d, g in df[df["has_event_time"]].groupby("date"):
+    e = int(g["last_end_h"].iloc[0] // 1)
+    win[d] = (g.loc[g["hour"].between(e - 1, e + 2), "entries"].sum(), "concert" if g["is_concert"].iloc[0] else "sport" if g["is_sport"].iloc[0] else "other")
+wd = pd.DataFrame(win, index=["w", "t"]).T.sort_index(); wd["w"] = wd["w"].astype(float)
+def past_feats(d):
+    p = wd[wd.index <= d - pd.Timedelta(days=7)]
+    if p.empty: return pd.Series({"prev_event_win": None, "prev3_event_win": None, "prev_type_win": None})
+    t = wd.loc[d, "t"] if d in wd.index else None
+    pt = p[p.t == t].w.tail(3) if t else p.w.tail(0)
+    return pd.Series({"prev_event_win": p.w.iloc[-1], "prev3_event_win": p.w.tail(3).mean(), "prev_type_win": pt.mean() if len(pt) else None})
+pf = pd.DataFrame({d: past_feats(d) for d in df.loc[df["event_today"], "date"].unique()}).T
+pf.index = pd.to_datetime(pf.index)
+df = df.join(pf, on="date")
 df = df.drop(columns="date")
 df.to_parquet("master.parquet")
 df.to_csv("master.csv", encoding="utf-8-sig")
