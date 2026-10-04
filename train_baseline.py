@@ -20,6 +20,7 @@ EVENT = ["n_events", "n_sessions", "first_start_h", "last_start_h", "last_end_h"
          "rel_end_h", "rel_start_h", "is_end_hour", "is_post_end_hour"]
 
 PREV = ["prev_event_win", "prev3_event_win", "prev_type_win"]
+SERIES = ["series_last_win", "series_mean_win", "series_n_past", "series_days_since"]
 PRICE = ["price_median", "price_min", "price_mean", "n_price_tiers"]
 
 def mk(cols):
@@ -48,6 +49,7 @@ preds["LGBM_A"], _ = fit_predict(BASE)
 preds["LGBM_B"], mB = fit_predict(BASE + EVENT)
 preds["LGBM_C"], mC = fit_predict(BASE + EVENT + PRICE)
 preds["LGBM_D"], mD = fit_predict(BASE + EVENT + PRICE + PREV)
+preds["LGBM_E"], mE = fit_predict(BASE + EVENT + PRICE + SERIES)
 
 masks = {"all": df.entries == df.entries,
          "event_day": df.event_today,
@@ -63,5 +65,5 @@ for s in ["test"]:
 res = pd.DataFrame(rows, columns=["split", "subset", "model", "n", "MAE", "RMSE"]).round(1)
 print(res.to_string(index=False))
 res.to_csv("baseline_results.csv", index=False, encoding="utf-8-sig")
-imp = pd.Series(mD.feature_importances_, index=mD.feature_name_).sort_values(ascending=False)
+imp = pd.Series(mE.feature_importances_, index=mE.feature_name_).sort_values(ascending=False)
 print(imp.head(12).to_string())

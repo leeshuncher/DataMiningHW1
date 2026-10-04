@@ -24,6 +24,7 @@ Forecast **hourly 進站 (entry) counts at 台北小巨蛋 station for the next 
    - `fetch_tickets.py` → `events_tickets.csv` (主辦單位/票價/售票系統 per event page; no ticket counts exist on the site). `build_event_features.py` turns prices into `price_median/min/mean`, `n_price_tiers` (median, not max, because VIP/package prices distort the max).
    - `match_events.py` → `events_official.csv` (one row per event date; cancelled dates dropped, postponed dates moved) and fills `活動名稱/類型/備註` in `events/candidates_YYYY.csv`.
    - `fetch_details.py` → `events_detail.csv` (the 「活動日期/時間」 field of every detail page); `fill_times.py` → `events_sessions.csv` and fills 開演時間/預估散場 in the yearly sheets.
+   - `event_series.py` links titles of the same artist/series (used by `build_master.py` for `series_*` history features; they bring little gain, see TODO).
    - `build_event_features.py` → `events_daily.csv` (daily features from the official schedule).
 6. `build_master.py` joins everything into the hourly table `master.parquet`.
 

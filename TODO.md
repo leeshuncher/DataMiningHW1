@@ -6,6 +6,13 @@ lag_7d 202.8/327.2/1367.6, A 116.8/220.0/1390.6, B 104.5/186.2/980.0, C 102.9/18
 advantage at end hours disappeared (end-hour WAPE: L1 40.7, Poisson 41.3, blend 40.1), consistent with the earlier "differences are noise" note.
 `train_variants.py`, `tune_models.py`, `diag_end.py` still use the legacy 3-way split (train 2018-19+2023 / valid 2024-25 / test 2026); the numbers below this note come from that split.
 
+**Same artist/series history (latest experiment).** `event_series.py` links titles sharing a distinctive name fragment (pairwise, no chaining; generic words
+stoplisted; 372 of 495 titles linked) and `build_master.py` adds `series_last_win`, `series_mean_win`, `series_n_past`, `series_days_since` (end-window entries of earlier linked shows >=7 days back).
+The signal is real at event level (corr with the show's end-window total 0.48 on 245 days with history vs 0.05–0.2 for "previous event") but the hourly model gains little:
+test MAE all 102.9 → 102.7, event days 182.2 → 180.2, end hour(+1) 938.3 → 930.7 (model E vs C); split by history: end hour(+1) WITH history 792→800, WITHOUT 1425→1368. Within noise.
+Only 208 event days have a full 4-hour end window (35 in test), so a two-stage event-size model is too small to evaluate reliably. Link quality is heuristic (some false links, e.g. sponsor names);
+manual artist aliasing (A-Lin/ALin, 張韶涵 etc.) not done.
+
 Status: the modelling table `master.parquet` is built (49,656 hourly rows, 2018–2019 and 2023–2026-08). Baselines are trained (`train_baseline.py` → `baseline_results.csv`).
 
 ## 1. Baseline models (done; refine next)

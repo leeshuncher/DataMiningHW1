@@ -65,6 +65,28 @@ def past_feats(d):
 pf = pd.DataFrame({d: past_feats(d) for d in df.loc[df["event_today"], "date"].unique()}).T
 pf.index = pd.to_datetime(pf.index)
 df = df.join(pf, on="date")
+
+# same artist / series history: end-window entries of earlier shows whose title is linked to today's title (event_series.py).
+# Same >= 7 day rule as the lags. Per title: latest linked show, mean of all linked shows, number of linked past shows, days since the latest.
+from event_series import title_links
+off = pd.read_csv("events_official.csv", encoding="utf-8-sig", parse_dates=["date"])
+links = title_links(dict(zip(off["raw"], off["title"])))
+dates_of = off.groupby("raw")["date"].apply(list).to_dict()
+sw = wd["w"].to_dict()
+def series_feats(d, raw):
+    past = [(pd.Timestamp(d2), sw[pd.Timestamp(d2)]) for r2 in links.get(raw, {}) for d2 in dates_of[r2]
+            if pd.Timestamp(d2) <= d - pd.Timedelta(days=7) and pd.Timestamp(d2) in sw]
+    if not past: return None
+    past.sort()
+    return dict(series_last_win=past[-1][1], series_mean_win=sum(w for _, w in past) / len(past),
+                series_n_past=len(past), series_days_since=(d - past[-1][0]).days)
+rows = {}
+for d, g in off.groupby("date"):
+    fs = [f for f in (series_feats(d, r) for r in g["raw"]) if f]
+    if fs: rows[d] = pd.DataFrame(fs).mean()
+sf = pd.DataFrame(rows).T
+df = df.join(sf, on="date")
+df["series_n_past"] = df["series_n_past"].fillna(0)
 df = df.drop(columns="date")
 df.to_parquet("master.parquet")
 df.to_csv("master.csv", encoding="utf-8-sig")
