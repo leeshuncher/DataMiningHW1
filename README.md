@@ -7,8 +7,8 @@ Paper: [`paper/paper.pdf`](paper/paper.pdf) (ACL format, LaTeX source in `paper/
 ## Headline results (2025 test year)
 - MAE 1.42 min; 25% below last week's same hour (95% CI 16-34%), 50% below it on long-weekend days (3.40 to 1.69 min).
 - Departure-hour regret on long weekends 0.82 min per 4-hour window (threshold 1.0).
-- Statistically tied with gradient boosting in cross-validation (p = 0.72). Weak spots: ordinary Saturdays, first day and eve of long weekends, unexplained incidents.
-- The 2025 test set was not fully blind; see "Disclosure" in the paper.
+- Statistically tied with gradient boosting in cross-validation (p = 0.72) and with a 1,000+ term one-hot ridge, while every coefficient reads as minutes of delay.
+- The 2025 test set was not fully blind; see "Protocol note" in the paper.
 
 ## Layout
 | Path | Content |
@@ -32,6 +32,7 @@ python src/cv_select.py              # rolling-origin CV selection for the large
 python src/compact_model.py; python src/compact_cv2.py   # compact design selection
 python src/final_compact.py          # final model, baselines, bootstrap, decision metric
 python src/final_ablation_coef.py    # ablation Sets A/B/C, coefficient table
+python src/alpha_curve.py            # ridge-penalty tuning curve of the final model
 python src/interpretable_ols.py      # H1-H4 tests on log minutes
 python src/error_cases.py            # largest errors
 cd paper && latexmk -pdf paper.tex
