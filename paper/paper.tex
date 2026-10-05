@@ -7,6 +7,8 @@
 \usepackage{microtype}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{CJKutf8}
+\newcommand{\zh}[1]{\begin{CJK}{UTF8}{bsmi}#1\end{CJK}}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning}
@@ -23,7 +25,9 @@
 \newcommand{\tb}{\footnotesize}
 
 \title{Day-Ahead Travel Time Forecasting on Freeway 5 Southbound\\with an Interpretable Linear Model}
-\author{Team [TEAM ID]: [NAME (STUDENT ID)], [NAME (STUDENT ID)], [NAME (STUDENT ID)]\\
+\author{Team [TEAM ID]\\
+\normalfont\small \zh{李尚哲} 314580057, \zh{呂丞頤} 314580055, \zh{黃駿甯} 314580075, \zh{吳美真} 414551035\\
+\normalfont\small \zh{孫傅康} 112550176, \zh{傅維雨} 112550149, \zh{張凱華} 315554024, \zh{李玠廷} 315554034\\
 Code and data: \url{https://github.com/leeshuncher/DataMiningHW1}}
 
 \begin{document}
@@ -288,18 +292,23 @@ C $-$ Saturday terms & 1.51$\pm$0.35 & 1.56 & 1.51 & 2.98 & 6.27 & 7.83\\\bottom
 \noindent\textbf{Error analysis.} The three largest 2025 errors (Table~\ref{tab:err}) are not holiday days: all are ordinary days under-predicted by about 44 min, with both the first segment and the tunnel section slow. Without incident, weather or road-work data the cause is unverified (incidents, closures or rain are plausible). The shared pattern is information the model never sees, so the first fix is better inputs (weather forecasts, announced traffic-control notices), not a bigger model; for the calendar part, eve evenings (about ten training eves) are next.
 
 \section{Conclusion and Limitations}
-\textbf{Answer to the research question:} yes. Calendar and holiday structure alone let a 109-term median linear model forecast day-ahead hourly travel time with MAE 1.49 min on a pre-registered blind 2026 test (1.42 on 2025), 26\% below last week's same hour and 39\% below it on long weekends; its recommended departure hour is within 0.45 min of the best on long weekends, inside the 1.0 min threshold. It ties gradient boosting overall and beats it where congestion occurs, while every term remains a readable number of minutes. What mattered was not \emph{whether} a day is a holiday but \emph{when} in the day each holiday type is slow: first-day and Saturday afternoons, eve evenings. \emph{Recommendation:} a trip app can use the forecast directly to suggest departure hours before long weekends; for the first day, shifting a departure out of the 12--18h block saves the most time.
+\textbf{Answer to the research question:} yes. Calendar and holiday structure alone let a 109-term median linear model forecast day-ahead hourly travel time with MAE 1.49 min on a pre-registered blind 2026 test (1.42 on 2025), 26\% below last week's same hour and 39\% below it on long weekends; its recommended departure hour is within 0.45 min of the best on long weekends, inside the 1.0 min threshold. It ties gradient boosting overall and beats it where congestion occurs, while every term remains a readable number of minutes. What mattered is \emph{when} in the day each holiday type is slow: first-day and Saturday afternoons, eve evenings. \emph{Recommendation:} a trip app can use the forecast directly to suggest departure hours before long weekends; for the first day, shifting a departure out of the 12--18h block saves the most time.
 \emph{Limitations:} few holiday days (5 first days and 5 eves in 2026, 8 each in 2025) give wide intervals; eve evenings remain the weakest slice; the target ends 2.6 km past the Toucheng exit and sums segment times; 2023 ordinary days were down-weighted; no weather or incident data; the 1.0 min threshold is assumed. Next: weather and traffic-control inputs, eve terms extending to midnight, and the rest of 2026.
 
 \section*{Contributions of Each Member}
 \begin{itemize}
-\item{} [NAME (STUDENT ID)]: [e.g.\ data download and preprocessing; \S3, Table~\ref{tab:data}].
-\item{} [NAME (STUDENT ID)]: [e.g.\ exploratory analysis and feature design; \S4--5, Fig.~\ref{fig:hourly}].
-\item{} [NAME (STUDENT ID)]: [e.g.\ validation, baselines, ablation, significance tests; \S6--8].
+\item \zh{李尚哲} (314580057): [task].
+\item \zh{呂丞頤} (314580055): [task].
+\item \zh{黃駿甯} (314580075): [task].
+\item \zh{吳美真} (414551035): [task].
+\item \zh{孫傅康} (112550176): [task].
+\item \zh{傅維雨} (112550149): [task].
+\item \zh{張凱華} (315554024): [task].
+\item \zh{李玠廷} (315554034): [task].
 \item All: slides, proofreading.
 \end{itemize}
 
-\noindent\textbf{AI usage.} Claude (Anthropic) wrote the scripts, ran the experiments and drafted the text. The team chose the topic and user, reviewed protocol and results (catching test-set leakage early) and is responsible for all content. [Team: version used; what each member verified.]
+\noindent\textbf{AI usage.} Claude (Anthropic) wrote the scripts, ran the experiments and drafted the text. The team chose the topic and user, reviewed protocol and results (catching test-set leakage early) and is responsible for all content. [Version; checks by member.]
 
 \bibliography{refs}
 \end{document}
