@@ -8,10 +8,14 @@ from sklearn.linear_model import Ridge
 from sklearn.model_selection import TimeSeriesSplit
 from protocol import data, drift_weights, fold_split, QUARTERS, ORD, HOL
 
-def compact_X(d, edges, labels):
+def compact_X(d, edges, labels, hours=False):
     blk = pd.cut(d.hod, edges, labels=labels, include_lowest=True, ordered=False).astype(str); X = pd.DataFrame(index=d.index)
     inner = [l for l in labels if l != "night"]
-    for b in inner: X["blk_" + b] = (blk == b).astype(float)
+    if hours:   # hourly main effects replace the block main effects (the day-type x block interactions stay)
+        hr = d.slot.astype(int)
+        for h in range(1, 24): X[f"hr_{h}"] = (hr == h).astype(float)
+    else:
+        for b in inner: X["blk_" + b] = (blk == b).astype(float)
     fri = (d.daytype == "weekday") & (d.dow == 4)
     for b in inner[len(inner) // 2:]: X["fri_" + b] = (fri & (blk == b)).astype(float)
     types = {"sat": d.daytype == "sat", "sun": d.daytype == "sun", "lwf": d.daytype == "lw_first", "lwm": d.daytype == "lw_mid", "lwl": d.daytype == "lw_last",
@@ -25,13 +29,14 @@ def compact_X(d, edges, labels):
 
 BLOCKS = {"compact5": ([0, 5.99, 9.99, 13.99, 17.99, 21.99, 24], ["night", "am", "mid", "pm", "ev", "night"]),
           "compact8": ([0, 5.99, 7.99, 9.99, 11.99, 13.99, 15.99, 17.99, 19.99, 21.99, 24], ["night", "6-8", "8-10", "10-12", "12-14", "14-16", "16-18", "18-20", "20-22", "night"])}
+BLOCKS["compact8h"] = BLOCKS["compact8"]
 def blocks(name):
     e, l = BLOCKS[name]; return e, l
 
 def fit_predict(train, test, name, loss, w2023, ly=False, drop=(), keep_cols=None, topk=None, custom_X=None):
     e, l = blocks(name)
     def mk(df):
-        X = custom_X(df) if custom_X is not None else compact_X(df, e, l)
+        X = custom_X(df) if custom_X is not None else compact_X(df, e, l, hours=name.endswith("h"))
         if ly: X["ly_f"] = df.ly.fillna(df.lag4mean).values / 30.0; X["ly_ok"] = df.ly.notna().astype(float).values
         return X.drop(columns=[c for c in X.columns if any(c.startswith(p) or c == p for p in drop)])
     Xtr_df, Xte_df = mk(train), mk(test); keep = Xtr_df.columns[(Xtr_df != 0).any()]

@@ -9,7 +9,7 @@ from protocol import *
 from forecast_common import decision_regret, gbm_fit
 import compact_model as cm
 
-NAME, LOSS, W23 = "compact8", "l1", 0.1; FINAL = "Ours: compact linear (median regression)"
+NAME, LOSS, W23 = "compact8h", "l1", 0.1; FINAL = "Ours: compact linear (median regression)"
 d = data(); train, test = d[d.index.year <= 2024], d[d.index.year == 2025]; W = drift_weights(train, W23); y = test.minutes.values
 cfg_large = json.load(open("cv_selected.json"))
 

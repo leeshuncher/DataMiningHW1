@@ -8,7 +8,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 from protocol import *
 import compact_model as cm
 
-NAME, LOSS, W23, K = "compact8", "l1", 0.1, 30
+NAME, LOSS, W23, K = "compact8h", "l1", 0.1, 30
 d = data(); train, test = d[d.index.year <= 2024], d[d.index.year == 2025]; y = test.minutes.values
 E, L = cm.blocks(NAME)
 def setA(df):   # raw columns: hour of day (one-hot), weekday (one-hot), long-weekend flag
