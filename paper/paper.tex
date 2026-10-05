@@ -6,6 +6,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
 \usepackage{booktabs}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning}
 \usepackage{pgfplots}
@@ -39,23 +41,34 @@ Freeway 5 is the main fast route between Taipei and Yilan; its southbound direct
 \noindent\textbf{Contributions.} (1) A decision metric in minutes: the time lost by leaving at the recommended hour instead of the truly fastest hour in a 4-hour window, threshold 1.0 min. (2) A compact 109-term linear model whose coefficients are minutes of delay; it ties gradient boosting in cross-validation, matches a ten-times larger one-hot model, and halves last week's error on long weekends. (3) An analysis of what the model learned: long-weekend congestion is an afternoon effect (first-day mornings are \emph{faster} than Saturday mornings), eve evenings are 12--29\% slower, and the remaining large errors are incidents that no calendar can foresee.
 
 \section{Related Work}
-Table~\ref{tab:rel} compares four verified sources (checked on arXiv, the publisher or Crossref). Rice and van Zwet \shortcite{rice2004} use a linear model with time-varying coefficients but need the current travel time; we have none the evening before. Fan et al.\ \shortcite{fan2018} apply machine learning to Taiwan eTag data and Bansal \shortcite{bansal2020} applies support vector regression to a Freeway~1 segment; we study the holiday bottleneck of Freeway~5 with a readable linear model. Ashouri et al.\ \shortcite{ashouri2023} analyse consecutive-holiday traffic with reconciled OLS forecasts and anomaly detection; we forecast travel time and evaluate the departure decision.
-\begin{table}[t]\tb\centering
-\begin{tabular}{@{}p{1.15cm}p{2.0cm}p{1.9cm}p{1.35cm}@{}}
-\toprule Work & Data & Features/model & Horizon\\\midrule
-Rice 04 & Freeway travel times & current time, time of day; time-varying linear & short\\
-Fan 18 & Taiwan eTag & historical + real-time; ML & n/v\\
-Bansal 20 & Freeway 1, 36 km & 43 predictors$\to$6; BBO-SVR & n/v\\
-Ashouri 23 & Taiwan holidays 2019--21 & Fourier terms; reconciled OLS & holiday patterns\\
-\textbf{Ours} & Freeway 5 SB, 2023--25 & calendar only; median linear, 109 terms & 1 day\\\bottomrule
+Table~\ref{tab:rel} compares four verified sources. \citet{rice2004} and \citet{fan2018} rely on \emph{real-time} traffic data, which does not exist the evening before; \citet{bansal2020} selects 6 of 43 predictors for an SVR on Freeway~1. \citet{ashouri2023} is closest in spirit, a calendar-driven OLS for Taiwanese holidays, but forecasts vehicle counts. We differ in target (travel time through the Freeway~5 bottleneck), horizon (one day, calendar only) and evaluation (a departure decision).
+\begin{table*}[t]\tb\centering\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}L{2.55cm}L{2.45cm}L{2.25cm}L{2.8cm}L{2.15cm}L{2.75cm}@{}}
+\toprule Work & Data & Target & Features & Model & Reported error\\\midrule
+\citet{rice2004} & freeway loop detectors & travel time, short-term & current travel time, time of day & time-varying linear & n/v\\
+\citet{fan2018} & Taiwan ETC & travel time & historical + real-time & random forest & n/v\\
+\citet{bansal2020} & Freeway 1, 36.1 km & travel time & 43 predictors $\to$ 6 & BBO-SVR & MAPE 6.44\%\\
+\citet{ashouri2023} & Taiwan holidays 2019--21 & hourly vehicle counts & Fourier terms, hierarchy & reconciled OLS & RMSE per level, OLS $\approx$ ARIMA\\
+\textbf{Ours} & Freeway 5 SB, 2023--25 & travel time, 1 day ahead & calendar only & median linear, 109 terms & MAE 1.42 min, MAPE 3.6\%\\\bottomrule
 \end{tabular}
-\caption{Related work (n/v: not verified from sources we could open; errors not comparable across data).}\label{tab:rel}
+\caption{Related work. Errors are on different data and horizons, so they give context, not a ranking (n/v: no figure we could verify).}\label{tab:rel}
+\end{table*}
+
+\section{Task Definition and Data}
+\begin{table}[t]\tb\centering
+\begin{tabular}{@{}L{1.25cm}L{5.6cm}@{}}
+\toprule Item & Definition\\\midrule
+Target & Mean small-car travel time (min), Nangang System (km 0) to 05F0439S (km 43.9), southbound, through the Hsuehshan Tunnel; observed range 27.6--87.8 (1st--99th pct.\ 28.4--57.9)\\
+One row & One departure hour (24 per day)\\
+Inputs & Hour, weekday, holiday type and position in the holiday block, make-up workday\\
+Known at & 18:00 the day before; no same-day traffic, no weather\\
+Data & TDCS M04A 2023--2025, 26,304 hourly rows\\\bottomrule
+\end{tabular}
+\caption{Task card.}\label{tab:task}
 \end{table}
+\textbf{Task.} Table~\ref{tab:task} defines the task: one forecast per departure hour, made the evening before from facts that are already fixed then (the official holiday calendar is published months ahead).
 
-\section{Task and Data}
-\textbf{Target.} Hourly mean small-car (type 31) travel time in minutes from Nangang System (gantry 05F0000S, km 0) to 05F0439S (km 43.9), southbound; free flow is about 30 min, the worst hour 87.8 min. One row is one departure hour; inputs are hour, weekday, holiday type and structure, known at 18:00 the day before. No same-day data or weather are used.
-
-\noindent\textbf{Data.} TDCS M04A (median segment travel times per 5 min) for 2023-01-01 to 2025-12-31 (1,096 days, 26,304 hourly windows, 37 missing). We keep Freeway~5 southbound, type 31, valid rows only (seconds $>0$, count $\ge1$), sum the four segment medians within the same 5-min slot (missing if any is invalid), and average to hours with at least 6 of 12 valid slots; nothing is imputed. The sum ignores that a 30-min trip crosses slots, and the endpoint is 2.6 km past the Toucheng exit. Holidays come from ruyut/TaiwanCalendar; a long weekend is $\ge3$ consecutive non-working days and the eve is the working day before. All methods are scored on identical rows (target and four weeks of history present).
+\noindent\textbf{Data.} TDCS M04A \citep{tdcs} (median segment travel times per 5 min, public) for 2023-01-01 to 2025-12-31 (1,096 days, 26,304 hourly windows, 37 missing). We keep Freeway~5 southbound small cars (type 31), the vehicle class of our users. We drop invalid rows (seconds $>0$, count $\ge1$ required) because they encode missing detections, not fast trips. We sum the four segment medians within the same 5-min slot to obtain a trip time (missing if any segment is invalid, so no partial trip is counted), and average to hours with at least 6 of 12 valid slots so that one or two slots cannot define an hour. Nothing is imputed: only 0.14\% of hours are missing, and imputing them would invent exactly the rare jams we want to measure. The sum ignores that a 30-min trip crosses slots, and the endpoint is 2.6 km past the Toucheng exit. Holidays and make-up workdays come from TaiwanCalendar \citep{twcal}; a long weekend is $\ge3$ consecutive non-working days and the eve is the working day before. All methods are scored on identical rows (target and four weeks of history present).
 \begin{table}[t]\tb\centering
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule Split & Days & Rows & Mean & SD & $>$40 min\\\midrule
@@ -66,7 +79,7 @@ Test 2025 & 365 & 8,715 & 31.7 & 5.2 & 5.7\%\\\bottomrule
 \caption{Target summary (minutes).}\label{tab:data}
 \end{table}
 
-\section{Exploratory Analysis (training years only)}
+\section{Exploratory Feature Analysis}
 \begin{figure*}[t]\centering
 \pgfplotstableread[col sep=semicolon]{assoc.csv}\assoc
 \begin{tikzpicture}
@@ -137,10 +150,10 @@ The shape of the day depends on the day type (Fig.~\ref{fig:hourly}): weekdays p
 \end{figure*}
 \noindent\textbf{Features.} All features are 0/1 indicators of facts known the evening before, so every coefficient is minutes of delay (Table~\ref{tab:feat}); after dropping empty columns the model has 109 terms.
 \begin{table}[t]\tb\centering
-\begin{tabular}{@{}p{1.7cm}p{3.7cm}p{0.7cm}@{}}
+\begin{tabular}{@{}L{1.5cm}L{4.1cm}L{0.8cm}@{}}
 \toprule Group & Terms & Hyp.\\\midrule
-Hour of day & 23 hourly main effects & --\\
-Day type $\times$ block & 9 day types (Sat, Sun, eve split Friday/other, long-weekend first/mid/last, single holiday, make-up day), each a main effect + 8 two-hour blocks 06--22h & H1,H2\\
+Hour of day & 23 hourly effects (Fig.~\ref{fig:hourly}a) & --\\
+Day type $\times$ block & 9 day types (Sat, Sun, eve Fri/other, LW first/mid/last, single holiday, make-up day), each main effect + 8 two-hour blocks 06--22h & H1--3\\
 Friday evening & 4 terms (Fri $\times$ 14--22h blocks) & H3\\
 Long holiday & 1 term: first day, 12--18h, block $\ge4$ days & H4\\\bottomrule
 \end{tabular}
@@ -151,13 +164,13 @@ Last week, the 4-week mean and same-holiday-last-time have the strongest margina
 \noindent\textbf{Model.} Median (L1) linear regression fitted by iteratively reweighted ridge (8 iterations). Two properties of the data motivate it: the target is right-skewed (free flow 30 min, rare jams up to 88 min, Table~\ref{tab:data}), so a squared loss would let a few incident hours pull every coefficient, while the median is robust to them; and the indicators are only weakly collinear (VIF $\le3.1$), so strong shrinkage is unnecessary. Cross-validation confirmed L1 over a log-target least-squares fit (selection score 1.97 vs.\ 2.25). The ridge penalty $\alpha$ was selected from $\{0.01,0.1,1,3,10\}$ by 4-fold TimeSeriesSplit inside the training years; the tuning curve (CV MAE 1.661, \textbf{1.659}, 1.670, 1.741, 1.806, 1.903 for $\alpha{=}0.001,\dots,10$; 2.213 at 100) shows that the chosen $\alpha{=}0.01$ is the minimum of an extended grid and that larger penalties over-shrink the rare holiday terms, so the model is essentially unpenalised. 2023 weekdays, Saturdays and Sundays get weight 0.1 because 2023 Saturdays were much more congested; holiday days keep weight 1. Selection score = mean of ordinary-day and holiday-day MAE; a compact design is eligible if within 5\% of the best large one-hot model (2.001), and among eligible designs we take the lowest cross-validated departure loss. Blocks only: score 1.928, loss 0.715; blocks + hourly effects (chosen): 1.906, 0.304.
 
 \section{Experimental Setup}
-\textbf{Protocol.} Train 2023--2024, test 2025 (used for the final report). Rolling-origin CV on the four 2024 quarters, each trained on all earlier data, with the same folds, rows and weights for every method; we report mean $\pm$ SD. Significance: paired $t$-test over folds (low power) and a day-block bootstrap (2,000 resamples of whole days) on the test year; coefficient CIs use 300 day-resampled refits.
+\textbf{Protocol.} Train 2023--2024, test 2025 (used for the final report). Rolling-origin CV on the four 2024 quarters, each trained on all earlier data, never on its future (Fig.~\ref{fig:pipe}, bottom), with the same folds, rows and weights for every method; we report mean $\pm$ SD. Quarters are the natural fold size: each is long enough (about 2,100 hours) to contain several weekly cycles, and four folds validate every season once; all 2024 long weekends fall in Q1--Q2, so holiday CV numbers rest on those two folds. Significance: paired $t$-test over folds (low power) and a day-block bootstrap (2,000 resamples of whole days) on the test year; coefficient CIs use 300 day-resampled refits.
 
-\noindent\textbf{Metrics.} MAE, RMSE, $R^2$, and the decision regret: for each 4-hour window (06--10, 10--14, 14--18, 18--22h) recommend the hour with the lowest predicted time; regret = actual time there minus the window minimum. \textbf{Threshold:} mean regret $\le1.0$ min on long-weekend days (a driver rarely notices less).
+\noindent\textbf{Metrics.} MAE is the primary metric because a driver's cost is the minutes lost, linearly; RMSE is reported because rare long jams are what drivers fear most; $R^2$ shows variance explained beyond the mean. The decision regret measures the decision itself: for each 4-hour window (06--10, 10--14, 14--18, 18--22h) recommend the hour with the lowest predicted time; regret = actual time there minus the window minimum. \textbf{Threshold:} mean regret $\le1.0$ min on long-weekend days, about 3\% of the 30-min free-flow trip; we assume a driver cannot act on smaller differences, so below it following the forecast is practically as good as knowing the future.
 
 \noindent\textbf{Baselines.} Trivial training mean; last week same hour; same holiday last time (else last week); seasonal mean hour$\times$weekday; simple OLS on last week; gradient boosting (L1 and log targets, LightGBM, same weights); a large one-hot ridge (over 1,000 hour$\times$day-type terms).
 
-\noindent\textbf{Protocol note.} The 2025 year was opened before the final design was fixed: a first compact design (two-hour blocks, chosen by MAE alone) showed a departure loss of 0.89 min, so we added the departure loss to the CV selection rule and hourly main effects. The re-selection itself used only cross-validation on 2023--2024; earlier log-target and weighting choices were likewise re-decided by CV (which reversed the loss choice), and all exploration tables use 2023--2024 only. We report this so that the 2025 numbers can be read accordingly.
+\noindent\textbf{Protocol note.} 2025 was viewed once before the design was final: a first design chosen by MAE alone had a 0.89 min departure loss, so we added that loss to the CV rule and hourly effects. The re-selection, and the loss and weighting choices, used CV on 2023--2024 only.
 
 \section{Results}
 \begin{table*}[t]\tb\centering\setlength{\tabcolsep}{3.5pt}
@@ -205,7 +218,7 @@ LW first day (32) & 5.30 & 4.50 & 2.52 & 0.60\\\bottomrule
 \end{tabular}
 \caption{Mean regret (min per window), 2025. Start: leave at window start. Threshold 1.0 on long weekends.}\label{tab:dec}
 \end{table}
-\noindent\textbf{Decision metric.} Ours meets the threshold on long-weekend days (0.82 $<$ 1.0 min; 88\% of windows within 1 min of the best hour) and on all days (0.44; 92\%). Choosing the hour by our forecast saves 1.09 min per window over leaving at the window start (CI 0.95--1.24), 1.54 on long weekends (CI 0.98--2.09) and 2.78 on first days (CI 1.44--3.92), and it more than halves last week's long-weekend regret (1.81 to 0.82). GBM ranks hours better on first days (0.60 vs.\ 2.52, 8 days); so does the large one-hot ridge (0.65), which also has a separate term per first-day hour. Our design shares one value per two-hour first-day block, so it cannot order neighbouring hours inside a block: the gap is one of temporal resolution on 8 days, not of model family, and hourly first-day terms are the direct fix.
+\noindent\textbf{Decision metric.} Table~\ref{tab:dec}: ours meets the threshold on long-weekend days (0.82 $<$ 1.0 min; 88\% of windows within 1 min of the best hour) and on all days (0.44; 92\%). Choosing the hour by our forecast saves 1.09 min per window over leaving at the window start (CI 0.95--1.24), 1.54 on long weekends (CI 0.98--2.09) and 2.78 on first days (CI 1.44--3.92), and it more than halves last week's long-weekend regret (1.81 to 0.82). GBM ranks hours better on first days (0.60 vs.\ 2.52, 8 days); so does the large one-hot ridge (0.65), which also has a separate term per first-day hour. Our design shares one value per two-hour first-day block, so it cannot order neighbouring hours inside a block: the gap is one of temporal resolution on 8 days, not of model family, and hourly first-day terms are the direct fix.
 
 \begin{table*}[t]\tb\centering\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{@{}lrrrrrr@{}}
@@ -222,7 +235,7 @@ C $-$ Saturday terms & 1.51$\pm$0.35 & 1.56 & 1.51 & 2.98 & 6.27 & 7.83\\\bottom
 \end{tabular}
 \caption{Feature ablation, MAE in minutes (same L1 solver and weights). Slice columns are hourly MAE within the slice.}\label{tab:abl}
 \end{table*}
-\noindent\textbf{Feature ablation.}\label{sec:abl} Set A is hour, weekday and hour$\times$weekday; B adds the 30 holiday/structure columns most correlated with the target (selected inside each training fold; 15 and 60 gave the same ranking); C is the full model. C is 15\% better than A (CI 9--21\%) and 8\% better than B (CI 6--10\%) on the test year, with lower CV MAE as well (1.41 vs.\ 1.56 and 1.55). A correlation ranking is therefore not enough: it finds the holiday columns but not the day-type$\times$block structure that tells the model \emph{when} in the day the delay appears. The long-weekend terms are the most valuable group for the user: on first-day afternoons they cut error from 15.1 to 6.3 min (58\%), and on long-weekend daytime hours from 5.5 to 3.0 min. Saturday and Friday terms carry ordinary days (9.0\% and 2.7\% of overall MAE). The $\ge$4-day and eve terms change overall MAE by less than 1\% (CIs include 0); we keep them because cross-validation selected them and because they encode H3 and H4, which \S8 tests directly.
+\noindent\textbf{Feature ablation.}\label{sec:abl} Table~\ref{tab:abl} varies only the feature set (same solver, weights, folds). Set A is hour, weekday and hour$\times$weekday; B adds the 30 holiday/structure columns most correlated with the target (selected inside each training fold; $k{=}30$ is the middle of the tested values; $k{=}15$ and 60 give CV 1.77 and 1.45, so B improves with $k$ but stays above C at every $k$); C is the full model. C is 15\% better than A (CI 9--21\%) and 8\% better than B (CI 6--10\%) on the test year, with lower CV MAE as well (1.41 vs.\ 1.56 and 1.55). A correlation ranking finds holiday columns but not \emph{when} in the day their delay appears. The long-weekend terms are the most valuable group for the user: on first-day afternoons they cut error from 15.1 to 6.3 min (58\%), and on long-weekend daytime hours from 5.5 to 3.0 min. Saturday and Friday terms carry ordinary days (9.0\% and 2.7\% of overall MAE). The $\ge$4-day and eve terms change overall MAE by less than 1\% (CIs include 0); we keep them because cross-validation selected them and because they encode H3 and H4, which \S8 tests directly. \emph{Cost:} the engineered features need no extra data (the calendar is public months ahead), keep the model at 109 readable terms instead of over 1,000, and require no real-time feed; the gain is free.
 
 \section{Analysis}
 \begin{figure*}[t]\centering
@@ -255,35 +268,45 @@ C $-$ Saturday terms & 1.51$\pm$0.35 & 1.56 & 1.51 & 2.98 & 6.27 & 7.83\\\bottom
 \begin{table}[t]\tb\centering
 \begin{tabular}{@{}lrrrr@{}}
 \toprule Term & $\beta$ & 95\% CI & $p$ & VIF\\\midrule
-Hour 10h & 5.54 & 5.18, 6.05 & .007 & 2.24\\
 Hour 11h & 5.86 & 5.30, 6.75 & .007 & 2.24\\
 Fri 20--22h & 2.36 & 1.97, 2.78 & .007 & 1.22\\
 Sat 14--16h & 14.82 & 9.09, 18.66 & .007 & 1.51\\
-LW first 14--16h & 18.76 & 6.87, 28.02 & .007 & 1.94\\
 LW first 16--18h & 21.49 & 2.66, 26.26 & .013 & 1.94\\
 LW first 10--12h & $-0.54$ & $-2.04$, 0.33 & .160 & 1.27\\
 LW last 10--12h & $-3.91$ & $-4.52$, $-2.92$ & .007 & 1.28\\
 Eve (Fri) 20--22h & 8.28 & 5.55, 10.60 & .007 & 1.27\\
-Eve (other) 16--18h & 14.60 & 0.00, 22.11 & .007 & 1.26\\
 First day, $\ge$4 d & $-7.53$ & $-15.79$, 7.91 & .293 & 2.99\\\bottomrule
 \end{tabular}
 \caption{Selected coefficients (minutes; 300 day-resampled refits, so $p\ge2/300\approx.007$). Full table: \texttt{final2\_coefficients.csv}.}\label{tab:coef}
 \end{table}
-\textbf{Coefficients.} Figure~\ref{fig:coef} shows every term with its interval and VIF bound, and Table~\ref{tab:coef} lists the key ones with $p$-values. Because all features are 0/1 indicators on the same scale, we report coefficients in minutes rather than per standard deviation: a standardised $\beta$ would only rescale each term by its frequency and hide its meaning for the driver. The model learned a clear story. On weekdays the 10--11h peak adds 5.5--5.9 min, precisely estimated. Saturday 12--16h adds 12--15 min, and the first day of a long weekend adds 15--21 min at 12--18h, the largest effects in the model; their intervals are wide because the training years hold only about ten first days, but all exclude zero. The last day of a long weekend is \emph{faster} at 10--12h ($-3.9$ min), consistent with southbound demand having already left. The eve of a long weekend adds 8.3 min on Friday 20--22h and up to 14.6 min on other weekdays. Make-up working Saturdays add 11--21 min at 10--16h (6 training days): they behave like a busy Saturday, not like a working day. All VIFs are at most 3.1, so these estimates are not distorted by collinearity.
+\textbf{Coefficients.} Figure~\ref{fig:coef} shows every term with its interval and VIF bound, and Table~\ref{tab:coef} lists the key ones with $p$-values. All features are 0/1 indicators on one scale, so we report $\beta$ in minutes; standardising would only rescale each term by its frequency. On weekdays the 10--11h peak adds 5.5--5.9 min, precisely estimated. Saturday 12--16h adds 12--15 min, and the first day of a long weekend adds 15--21 min at 12--18h, the largest effects in the model; their intervals are wide because the training years hold only about ten first days, but all exclude zero. The last day of a long weekend is \emph{faster} at 10--12h ($-3.9$ min), consistent with southbound demand having already left. The eve of a long weekend adds 8.3 min on Friday 20--22h and up to 14.6 min on other weekdays. Make-up workdays add 11--21 min at 10--16h (6 training days), like a busy Saturday. Statistical and practical significance differ: the 01h term ($-0.11$ min, CI $-0.14$ to $-0.09$) is significant but irrelevant to a driver, whereas the first-day afternoon terms change a departure. VIFs $\le3.1$: no collinearity concern.
 
-\noindent\textbf{Hypothesis tests} (training years; OLS on log minutes, day-clustered SE). \textbf{H1 rejected, informatively:} first-day mornings are 18.4\% \emph{faster} than Saturday mornings, and the first-day excess appears only in the afternoon (+11.2\%, $p{=}0.089$). Holiday traffic leaves later than weekend traffic, which is why the model needs day-type$\times$block terms rather than a single holiday flag. \textbf{H2 mostly supported:} last-day effects are $-0.3$\%, $-0.6$\%, $+0.4$\% in the morning, afternoon and evening, but 10--14h is 9.9\% faster ($p=0.0001$). \textbf{H3 supported:} eve evenings are +11.9\% (Friday, $p<0.001$) and +28.9\% (other weekdays, $p=0.0007$). \textbf{H4 suggestive:} $-18.8\%$ ($p=0.028$ one-sided) in the log model, but the final-model interval covers zero.
+\noindent\textbf{Hypothesis tests} (training years; OLS on log minutes, day-clustered SE). \textbf{H1 rejected, informatively:} first-day mornings are 18.4\% \emph{faster} than Saturday mornings, and the first-day excess appears only in the afternoon (+11.2\%, $p{=}0.089$). Holiday traffic leaves later, so a single holiday flag would not do. \textbf{H2 mostly supported:} last-day effects are $-0.3$\%, $-0.6$\%, $+0.4$\% in the morning, afternoon and evening, but 10--14h is 9.9\% faster ($p=0.0001$). \textbf{H3 supported:} eve evenings are +11.9\% (Friday, $p<0.001$) and +28.9\% (other weekdays, $p=0.0007$). \textbf{H4 suggestive:} $-18.8\%$ ($p=0.028$ one-sided) in the log model, but the final-model interval covers zero.
 
-\noindent\textbf{Error analysis.} The three largest 2025 errors are not holiday days: all are ordinary days under-predicted by about 44 min: 2025-07-01 10h (actual 79.1, predicted 34.7), 2025-08-16 (Sat) 11h (84.9 vs.\ 40.7) and 2025-09-12 11h (79.0 vs.\ 35.0); last week's value was 35.0, 65.7, 32.4. In each, both the first segment (20--22 min) and the tunnel section (48--54 min) are slow. We have no incident, weather or road-work data, so the cause is unknown (incidents, closures or rain are plausible but unverified). The shared pattern is information the model never sees, not a calendar effect it mis-learned; the first fix is better inputs (weather forecasts, announced traffic-control notices), not a bigger model. Eve evenings, learned from about ten eves, are the remaining calendar slice to improve; a previous-year same-eve feature is the next experiment.
+\begin{table}[t]\tb\centering\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llrrrr@{}}
+\toprule \# & Time (2025, ordinary day) & Actual & Pred. & Error & Last wk\\\midrule
+1 & 07-01 Tue 10h & 79.1 & 34.7 & $-44.4$ & 35.0\\
+2 & 08-16 Sat 11h & 84.9 & 40.7 & $-44.2$ & 65.7\\
+3 & 09-12 Fri 11h & 79.0 & 35.0 & $-44.0$ & 32.4\\\bottomrule
+\end{tabular}
+\caption{Largest 2025 errors (minutes; error = actual $-$ predicted). In all three, km 0--5.5 takes 20--22 min and the tunnel section 48--54 min, while the whole trip takes about 30 min at free flow.}\label{tab:err}
+\end{table}
+\noindent\textbf{Error analysis.} The three largest 2025 errors (Table~\ref{tab:err}) are not holiday days: all are ordinary days under-predicted by about 44 min, with both the first segment and the tunnel section slow. Without incident, weather or road-work data the cause is unverified (incidents, closures or rain are plausible). The shared pattern is information the model never sees, so the first fix is better inputs (weather forecasts, announced traffic-control notices), not a bigger model; for the calendar part, eve evenings (about ten training eves) are next.
 
 \section{Conclusion and Limitations}
 \textbf{Answer to the research question:} yes. Calendar and holiday structure alone let a 109-term median linear model forecast day-ahead hourly travel time with test MAE 1.42 min, 25\% below last week's same hour and 50\% below it on long weekends, and its recommended departure hour is within 0.82 min of the best hour on long weekends, inside the 1.0 min threshold. It is tied with gradient boosting and a ten-times larger linear model in accuracy while every term remains a readable number of minutes. What mattered was not \emph{whether} a day is a holiday but \emph{when} in the day each holiday type is slow: first-day and Saturday afternoons, eve evenings. \emph{Recommendation:} a trip app can use the forecast directly to suggest departure hours before long weekends; for the first day, shifting a departure out of the 12--18h block saves the most time.
-\emph{Limitations:} one test year and few holiday days (31 long-weekend days, 8 first days, 8 eves) give wide intervals; 2025 was not fully blind (see Protocol note); the target ends 2.6 km past the Toucheng exit and sums segment times; 2023 Saturdays differ and were down-weighted; no weather or incident data; the 1.0 min threshold is our assumption. Next: weather and traffic-control inputs, a same-eve feature, and 2026 data.
+\emph{Limitations:} one test year and few holiday days (31 long-weekend days, 8 first days, 8 eves) give wide intervals; 2025 was not fully blind (see Protocol note); the target ends 2.6 km past the Toucheng exit and sums segment times; 2023 ordinary days were down-weighted; no weather or incident data; the 1.0 min threshold is assumed. Next: weather and traffic-control inputs, a same-eve feature, and 2026 data.
 
 \section*{Contributions of Each Member}
-[NAME (STUDENT ID)]: [task]; [NAME (STUDENT ID)]: [task]; [NAME (STUDENT ID)]: [task].
+\begin{itemize}
+\item{} [NAME (STUDENT ID)]: [e.g.\ data download and preprocessing; \S3, Table~\ref{tab:data}].
+\item{} [NAME (STUDENT ID)]: [e.g.\ exploratory analysis and feature design; \S4--5, Fig.~\ref{fig:hourly}].
+\item{} [NAME (STUDENT ID)]: [e.g.\ validation, baselines, ablation, significance tests; \S6--8].
+\item All: slides, proofreading.
+\end{itemize}
 
-\section*{AI Usage Statement}
-We used Claude (Anthropic) as a coding and writing assistant: it wrote the data-processing, modelling and evaluation scripts, ran the experiments and drafted this paper. The team chose the topic, reviewed the protocol and results (a review found test-set leakage in an earlier version, which was corrected), and is responsible for the content. [Team: describe what each member checked.]
+\noindent\textbf{AI usage.} Claude (Anthropic) wrote the processing, modelling and evaluation scripts, ran the experiments and drafted the text. The team chose the topic and user, reviewed the protocol and results (catching test-set leakage in an early version) and is responsible for all content. [Team: version used; what each member verified.]
 
 \bibliography{refs}
 \end{document}
