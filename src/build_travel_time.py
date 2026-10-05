@@ -22,7 +22,7 @@ from pathlib import Path
 
 import pandas as pd
 
-DATA = Path(__file__).parent / "data"
+DATA = Path(__file__).resolve().parent.parent / "data"
 CHAIN = ["05F0000S", "05F0055S", "05F0287S", "05F0309S"]  # from-gantries of the 4 segments
 
 

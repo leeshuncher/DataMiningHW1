@@ -10,7 +10,7 @@ Output : data/m04a/M04A_YYYYMMDD.csv (one file per day; existing files are skipp
          so the script can be stopped and resumed).
 Rate   : the site asks for >= 40 s between requests; we wait 41 s.
 
-Usage  : python download_m04a.py 20240101 20241231
+Usage  : python src/download_m04a.py 20240101 20241231
 """
 import io
 import re
@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 BASE = "https://tisvcloud.freeway.gov.tw/history/TDCS/M04A/M04A_{d}.tar.gz"
-OUT = Path(__file__).parent / "data" / "m04a"
+OUT = Path(__file__).resolve().parent.parent / "data" / "m04a"
 GAP = 41
 KEEP = re.compile(r"^05F\d{4}S$")
 
