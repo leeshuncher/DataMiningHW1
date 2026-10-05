@@ -53,16 +53,20 @@ def load_data(slot=60):
 
 CATS = ["c_slot", "c_dow", "c_dtype", "c_dtl", "c_s_dtype", "c_s_dow", "c_s_dtl", "c_eve"]
 
-def add_cats(d, eve_mode):
+def add_cats(d, eve_mode, night=False):
     """eve_mode: separate = 'eve_of_long' is its own day type (old approach, hour x type cells);
     none = a workday before a long weekend is treated as an ordinary weekday;
     shared = none + one effect per time-of-day bin for ALL eves; by_dow = none + one effect per bin, separately for Friday and other weekdays."""
     d = d.copy(); eve = d.daytype.eq("eve_of_long")
     dtype = d.daytype if eve_mode == "separate" else d.daytype.where(~eve, "weekday")
+    if night:   # long-weekend effect only in the daytime: at night (0-6h, 20-24h) a long-weekend day is treated as the ordinary day of that weekday
+        asleep = dtype.str.startswith("lw_") & ((d.hod < 6) | (d.hod >= 20))
+        dtype = dtype.where(~asleep, np.where(d.dow == 5, "sat", np.where(d.dow == 6, "sun", "weekday")))
     long_ = dtype.str.startswith("lw_")
     len_b = np.where(long_, np.where(d.block_len >= 5, "5+", d.block_len.astype(int).astype(str)), "-")
     sl, dw = d.slot.astype(str), d.dow.astype(str)
     d["c_slot"], d["c_dow"], d["c_dtype"] = sl, dw, dtype
+    d["c_lw"] = np.where(dtype.str.startswith("lw_"), "lw", "no")
     d["c_dtl"] = dtype + "_" + len_b
     d["c_s_dtype"], d["c_s_dow"], d["c_s_dtl"] = sl + "|" + dtype, sl + "|" + dw, sl + "|" + d.c_dtl
     bins = pd.cut(d.hod, [-1, 11.99, 15.99, 19.99, 24], labels=["am", "pm", "eve1", "eve2"]).astype(str)
@@ -93,10 +97,12 @@ def gbm_frame(d, codes):
                       "block_len": d.block_len.values, "block_pos": d.block_pos.values, "eve": (d.daytype == "eve_of_long").astype(int).values,
                       "eve_len": d.eve_len.values, "makeup": d.is_makeup_workday.astype(int).values}, index=d.index)
     f["lag7"], f["lag4mean"] = d.lag7.values, d.lag4mean.values
+    if "ly" in d.columns: f["ly"] = d.ly.values
     return f
 
-def gbm_fit(train, test, lags, log, objective):
-    codes = sorted(set(train.daytype) | set(test.daytype)); cols = GBM_CAL + (["lag7", "lag4mean"] if lags else [])
+def gbm_fit(train, test, lags, log, objective, weights=None, ly=False):
+    w_all = np.ones(len(train)) if weights is None else np.asarray(weights, float)
+    codes = sorted(set(train.daytype) | set(test.daytype)); cols = GBM_CAL + (["lag7", "lag4mean"] if lags else []) + (["ly"] if ly else [])
     Xtr, Xte = gbm_frame(train, codes)[cols], gbm_frame(test, codes)[cols]
     y = np.log(train.minutes.values) if log else train.minutes.values
     best = None
@@ -107,11 +113,11 @@ def gbm_fit(train, test, lags, log, objective):
                 for tr_i, va_i in TimeSeriesSplit(n_splits=4).split(Xtr):
                     m = lgb.LGBMRegressor(objective=objective, n_estimators=n, learning_rate=0.05, num_leaves=leaves, min_child_samples=mcs,
                                           subsample=0.8, subsample_freq=1, colsample_bytree=0.9, verbose=-1, random_state=0, n_jobs=4)
-                    p = m.fit(Xtr.iloc[tr_i], y[tr_i]).predict(Xtr.iloc[va_i]); p = np.exp(p) if log else p
+                    p = m.fit(Xtr.iloc[tr_i], y[tr_i], sample_weight=w_all[tr_i]).predict(Xtr.iloc[va_i]); p = np.exp(p) if log else p
                     errs.append(np.abs(p - train.minutes.values[va_i]).mean())
                 if best is None or np.mean(errs) < best[0]: best = (np.mean(errs), dict(num_leaves=leaves, n_estimators=n, min_child_samples=mcs))
     m = lgb.LGBMRegressor(objective=objective, learning_rate=0.05, subsample=0.8, subsample_freq=1, colsample_bytree=0.9, verbose=-1,
-                          random_state=0, n_jobs=4, **best[1]).fit(Xtr, y)
+                          random_state=0, n_jobs=4, **best[1]).fit(Xtr, y, sample_weight=w_all)
     p = m.predict(Xte)
     return (np.exp(p) if log else p), best[1]
 
