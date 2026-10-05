@@ -1,0 +1,7 @@
+﻿slice,n,Ridge log (L2),Ridge L1,GBM log (L2),GBM L1,Ridge log (L2) +lags,Ridge L1 +lags,GBM L1 +lags
+all,8715,1.54,1.45,1.54,1.43,1.52,1.42,1.41
+ordinary (weekday+sat+sun),7709,1.4,1.32,1.41,1.32,1.36,1.29,1.27
+holiday days (long weekend + eve),934,2.66,2.51,2.68,2.3,2.83,2.52,2.49
+long weekend days only,742,2.52,2.5,2.49,2.25,2.75,2.59,2.56
+lw_first,191,4.83,5.27,5.13,5.41,5.41,5.73,5.82
+sat,1005,4.36,4.21,4.37,4.2,4.1,4.05,3.86
