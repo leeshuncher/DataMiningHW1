@@ -1,0 +1,17 @@
+﻿feature,pearson_r,spearman_rho,mutual_info,n
+"mean of same slot, last 4 weeks",0.669,0.873,0.797,16732
+same slot last week,0.595,0.857,0.74,16732
+hour of day (0-23),0.1,0.32,0.733,16732
+daytime 08-18h,0.404,0.716,0.353,16732
+weekday number (Mon=0),0.149,0.119,0.094,16732
+Saturday x daytime,0.542,0.332,0.083,16732
+Saturday,0.319,0.145,0.039,16732
+Friday (ordinary),0.025,0.11,0.019,16732
+long weekend x daytime,0.12,0.14,0.016,16732
+Sunday,-0.101,-0.06,0.015,16732
+"holiday length (days, 0 if none)",0.04,0.037,0.008,16732
+"long weekend, first day",0.105,0.091,0.006,16732
+long-weekend day,0.048,0.037,0.005,16732
+"long weekend, last day",-0.044,-0.066,0.004,16732
+eve of long weekend,0.054,0.056,0.004,16732
+first day x afternoon 14-18h,0.135,0.07,0.003,16732
