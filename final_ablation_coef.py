@@ -10,12 +10,12 @@ import compact_model as cm
 
 NAME, LOSS, W23, K = "compact8h", "l1", 0.1, 30
 d = data(); train, test = d[d.index.year <= 2024], d[d.index.year == 2025]; y = test.minutes.values
-E, L = cm.blocks(NAME)
+E, L = cm.blocks(NAME); HRS = NAME.endswith("h")
 def setA(df):   # raw columns: hour of day (one-hot), weekday (one-hot), long-weekend flag
     X = pd.get_dummies(df.slot.astype(int), prefix="hour").astype(float).set_index(df.index)
     X = X.join(pd.get_dummies(df.dow.astype(int), prefix="dow").astype(float).set_index(df.index)); X["lw_flag"] = df.daytype.str.startswith("lw_").astype(float).values; return X
 def topk_cols(tr, k):
-    X = cm.compact_X(tr, E, L); yy = tr.minutes.values; Xc = X.values - X.values.mean(0); yc = yy - yy.mean()
+    X = cm.compact_X(tr, E, L, hours=HRS); yy = tr.minutes.values; Xc = X.values - X.values.mean(0); yc = yy - yy.mean()
     corr = np.abs((Xc * yc[:, None]).sum(0)) / (np.sqrt((Xc ** 2).sum(0)) * np.sqrt((yc ** 2).sum()) + 1e-12); return list(X.columns[np.argsort(-corr)[:k]])
 DROPS = {"C minus day-type x time-block interactions": ("sat_", "sun_", "lwf_", "lwm_", "lwl_", "eveF_", "eveO_", "single_", "makeup_"),
          "C minus Friday terms": ("fri_",), "C minus eve-of-long-weekend terms": ("eveF", "eveO"), "C minus long-weekend terms": ("lwf", "lwm", "lwl"),
@@ -53,7 +53,7 @@ for g, m in groups.items():
 pd.DataFrame(ob).to_csv("final2_ablation_bootstrap.csv", index=False, encoding="utf-8-sig"); print(pd.DataFrame(ob)[lambda x: x.slice.isin(["all slots", "holiday days", "long weekend 08-18h"])].to_string(index=False))
 
 # ---------------- coefficient table of the final model ----------------
-_, alpha, cols = cm.fit_predict(train, test, NAME, LOSS, W23); Xdf = cm.compact_X(train, E, L)[cols]; X = Xdf.values; yy = train.minutes.values; w = drift_weights(train, W23)
+_, alpha, cols = cm.fit_predict(train, test, NAME, LOSS, W23); Xdf = cm.compact_X(train, E, L, hours=HRS)[cols]; X = Xdf.values; yy = train.minutes.values; w = drift_weights(train, W23)
 def irls(Xa, ya, wa, a, it=8):
     m = Ridge(alpha=a); ww = wa.copy()
     for _ in range(it): m.fit(Xa, ya, sample_weight=ww); ww = wa / np.maximum(np.abs(ya - m.predict(Xa)), 0.25)

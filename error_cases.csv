@@ -1,0 +1,4 @@
+﻿date,weekday,hour,daytype,holiday,actual,predicted,error,last week,same holiday last time,day max actual,day max actual hour,seg 0.0-5.5km (min),seg 5.5-28.7km (tunnel section) (min),seg 28.7-30.9km (min),seg 30.9-43.9km (min)
+2025-07-01,二,10,weekday,nan,79.1,34.7,-44.4,35.0,35.0,79.1,10,20.0,49.3,1.5,8.3
+2025-08-16,六,11,sat,nan,84.9,40.7,-44.2,65.7,65.7,84.9,11,21.0,54.1,1.5,8.3
+2025-09-12,五,11,weekday,nan,79.0,35.0,-44.0,32.4,32.4,79.0,11,21.5,47.9,1.5,8.1
