@@ -4,19 +4,22 @@ Models: same slot last week (lag 7 d), train mean per hour x weekday, Ridge on c
 Ridge on calendar + lags (same slot last week, mean of the last 4 same weekdays), each on minutes and on log(minutes).
 Rows with missing target or missing lag are dropped for every model, so all models are scored on the same rows.
 Go rule: MAE on holiday days >= 20% lower than same-slot-last-week, and ordinary days not worse.
-Output: go_nogo_results.csv. Usage: python go_nogo.py"""
+Output: go_nogo_results.csv. Also: decision metric (see bottom). SLOT=30 python go_nogo.py runs the 30-minute version (files get a _30min suffix).
+Usage: python go_nogo.py"""
+import os
 import numpy as np, pandas as pd
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import TimeSeriesSplit
 
-t = pd.read_csv("data/travel_60min.csv", parse_dates=["depart"]).set_index("depart")
+SLOT = int(os.environ.get("SLOT", 60)); SUF = "" if SLOT == 60 else f"_{SLOT}min"; PER_DAY = 1440 // SLOT
+t = pd.read_csv(f"data/travel_{SLOT}min.csv", parse_dates=["depart"]).set_index("depart")
 cal = pd.read_csv("data/calendar.csv", parse_dates=["date"])
-d = t[["minutes"]].copy(); d["date"] = d.index.normalize(); d["hour"] = d.index.hour
+d = t[["minutes"]].copy(); d["date"] = d.index.normalize(); d["hour"] = (d.index.hour * 60 + d.index.minute) // SLOT   # slot index within the day
 d = d.merge(cal[["date", "daytype", "dow", "block_len"]], left_on="date", right_on="date", how="left").set_index(t.index)
 s = d.minutes
-d["lag7"] = s.shift(7 * 24)
-d["lag4mean"] = pd.concat([s.shift(k * 7 * 24) for k in (1, 2, 3, 4)], axis=1).mean(axis=1, skipna=False)
+d["lag7"] = s.shift(7 * PER_DAY)
+d["lag4mean"] = pd.concat([s.shift(k * 7 * PER_DAY) for k in (1, 2, 3, 4)], axis=1).mean(axis=1, skipna=False)
 long_ = d.daytype.str.startswith("lw_")
 d["len_b"] = np.where(long_, np.where(d.block_len >= 5, "5+", d.block_len.astype(str)), "-")
 d["dtype_len"] = d.daytype + "_" + d.len_b
@@ -67,7 +70,7 @@ for g, m in groups.items():
     base = r["last week (lag 7d) MAE"]
     r["best Ridge vs last week %"] = round(100 * (1 - min(v for kk, v in r.items() if kk.startswith("Ridge")) / base), 1)
     rows.append(r)
-res = pd.DataFrame(rows); res.to_csv("go_nogo_results.csv", index=False, encoding="utf-8-sig")
+res = pd.DataFrame(rows); res.to_csv(f"go_nogo_results{SUF}.csv", index=False, encoding="utf-8-sig")
 pd.set_option("display.width", 250); pd.set_option("display.max_columns", 20)
 print(res.to_string(index=False)); print("alphas", alphas)
 rm = pd.DataFrame({k: [float(np.sqrt(((p - y) ** 2).mean()))] for k, p in P.items()}, index=["RMSE all"]); print(rm.round(2).to_string())
@@ -88,5 +91,54 @@ for g in ["ordinary (weekday+sat+sun)", "holiday days (long weekend + eve)", "lo
             brow.append({"slice": g, "days": len(days), "candidate": cand, "baseline": base,
                          "improvement_%": round(100 * (1 - ae[cand].sum() / ae[base].sum()), 1),
                          "ci95_low": round(float(np.percentile(imp, 2.5)), 1), "ci95_high": round(float(np.percentile(imp, 97.5)), 1)})
-bt = pd.DataFrame(brow); bt.to_csv("go_nogo_bootstrap.csv", index=False, encoding="utf-8-sig")
+bt = pd.DataFrame(brow); bt.to_csv(f"go_nogo_bootstrap{SUF}.csv", index=False, encoding="utf-8-sig")
 print(bt[bt.candidate == "Ridge calendar (log)"].to_string(index=False))
+
+
+# ---- decision metric: leave in the slot the model recommends vs the truly fastest slot in the same window ----
+# For each test day and each 4-hour window the driver can choose any slot in it. The recommended slot is the argmin of the
+# predicted travel time (exact ties -> earliest). Regret = actual time at the recommended slot - actual minimum in the window.
+# "leave at window start" is the no-model default. Windows with a missing slot are skipped for every model.
+WINDOWS = [(6, 10), (10, 14), (14, 18), (18, 22)]
+P["leave at window start"] = None
+drows = []
+test_idx = test.index; slot = test.hour.values
+for date in np.unique(day_id):
+    mday = day_id == date
+    for (h0, h1) in WINDOWS:
+        lo, hi = h0 * 60 // SLOT, h1 * 60 // SLOT
+        m = mday & (slot >= lo) & (slot < hi)
+        if m.sum() != hi - lo: continue
+        act = y[m]; rec = {"oracle": 0.0, "leave at window start": act[0] - act.min()}
+        for k, p in P.items():
+            if p is None: continue
+            pv = p[m] + 1e-6 * np.arange(m.sum()); rec[k] = act[int(np.argmin(pv))] - act.min()
+        drows.append({"date": pd.Timestamp(date), "daytype": dt[m][0], "window": f"{h0:02d}-{h1:02d}", "range": act.max() - act.min(), **rec})
+dd = pd.DataFrame(drows)
+dgroups = {"ordinary (weekday+sat+sun)": ["weekday", "sat", "sun"], "holiday days (long weekend + eve)": ["lw_first", "lw_mid", "lw_last", "eve_of_long"],
+           "long weekend days only": ["lw_first", "lw_mid", "lw_last"], "sat": ["sat"], "lw_first": ["lw_first"]}
+models = ["leave at window start", "last week (lag 7d)", "mean per hour x weekday", "Ridge calendar", "Ridge calendar (log)", "Ridge calendar+lags (log)", "oracle"]
+out, boot = [], []
+for g, types in dgroups.items():
+    for congested in (False, True):
+        sub = dd[dd.daytype.isin(types)]
+        if congested: sub = sub[sub["range"] >= 5]
+        if sub.empty: continue
+        r = {"group": g, "windows": "range >= 5 min" if congested else "all", "n_windows": len(sub), "n_days": sub.date.nunique(), "mean_range_min": round(sub["range"].mean(), 2)}
+        for k in models: r[k] = round(sub[k].mean(), 2)
+        out.append(r)
+        dayg = sub.groupby("date")
+        sums = {k: dayg[k].sum() for k in models}; cnts = dayg.size(); days = sums["oracle"].index.values
+        for cand in ["Ridge calendar (log)"]:
+            for base in ["leave at window start", "mean per hour x weekday", "last week (lag 7d)"]:
+                diffs = []
+                for _ in range(2000):
+                    pick = rng.choice(days, len(days)); n = cnts.loc[pick].sum()
+                    diffs.append((sums[base].loc[pick].sum() - sums[cand].loc[pick].sum()) / n)
+                boot.append({"group": g, "windows": r["windows"], "candidate": cand, "baseline": base,
+                             "minutes_saved_per_window": round((sums[base].sum() - sums[cand].sum()) / cnts.sum(), 2),
+                             "ci95_low": round(float(np.percentile(diffs, 2.5)), 2), "ci95_high": round(float(np.percentile(diffs, 97.5)), 2)})
+dec = pd.DataFrame(out); dec.to_csv(f"decision_results{SUF}.csv", index=False, encoding="utf-8-sig")
+bdec = pd.DataFrame(boot); bdec.to_csv(f"decision_bootstrap{SUF}.csv", index=False, encoding="utf-8-sig")
+print("\nDecision regret = minutes lost vs the fastest slot in the 4-hour window (mean per window)")
+print(dec.to_string(index=False)); print(bdec.to_string(index=False))
