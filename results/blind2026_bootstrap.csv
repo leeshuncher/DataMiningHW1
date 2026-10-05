@@ -1,0 +1,145 @@
+﻿setting,slice,days,baseline,improvement_%,imp_ci_lo,imp_ci_hi,ours_minus_base_min,gap_ci_lo,gap_ci_hi
+P: train 2023-2025,all,243,Trivial: training mean,48.023,43.444,52.453,-1.378,-1.529,-1.237
+P: train 2023-2025,all,243,"Last week, same hour",26.23,15.049,36.057,-0.53,-0.811,-0.268
+P: train 2023-2025,all,243,Same holiday last time,20.989,8.101,31.892,-0.396,-0.665,-0.139
+P: train 2023-2025,all,243,Seasonal mean: hour x weekday,23.045,18.218,28.341,-0.447,-0.551,-0.35
+P: train 2023-2025,all,243,Simple: OLS on last week,32.023,25.234,38.907,-0.703,-0.883,-0.536
+P: train 2023-2025,all,243,Strong: GBM (L1),-2.504,-6.46,1.218,0.036,-0.019,0.088
+P: train 2023-2025,all,243,Strong: GBM (log),8.599,5.43,12.088,-0.14,-0.184,-0.095
+P: train 2023-2025,all,243,Flexible linear: large one-hot ridge,1.805,-0.571,4.284,-0.027,-0.063,0.009
+P: train 2023-2025,ordinary days,215,Trivial: training mean,48.703,43.741,53.922,-1.324,-1.479,-1.176
+P: train 2023-2025,ordinary days,215,"Last week, same hour",23.572,9.611,36.202,-0.43,-0.72,-0.158
+P: train 2023-2025,ordinary days,215,Same holiday last time,23.572,8.455,35.584,-0.43,-0.726,-0.133
+P: train 2023-2025,ordinary days,215,Seasonal mean: hour x weekday,17.952,13.372,23.199,-0.305,-0.37,-0.242
+P: train 2023-2025,ordinary days,215,Simple: OLS on last week,30.44,22.683,38.314,-0.61,-0.799,-0.441
+P: train 2023-2025,ordinary days,215,Strong: GBM (L1),-4.706,-8.765,-1.017,0.063,0.015,0.111
+P: train 2023-2025,ordinary days,215,Strong: GBM (log),9.937,6.847,13.631,-0.154,-0.193,-0.114
+P: train 2023-2025,ordinary days,215,Flexible linear: large one-hot ridge,1.103,-1.057,3.409,-0.016,-0.047,0.015
+P: train 2023-2025,long-weekend days,22,Trivial: training mean,50.105,41.831,59.204,-1.982,-2.629,-1.411
+P: train 2023-2025,long-weekend days,22,"Last week, same hour",38.81,25.882,48.121,-1.252,-2.07,-0.513
+P: train 2023-2025,long-weekend days,22,Same holiday last time,7.643,-23.085,29.125,-0.163,-0.893,0.427
+P: train 2023-2025,long-weekend days,22,Seasonal mean: hour x weekday,47.538,37.273,58.2,-1.789,-2.475,-1.151
+P: train 2023-2025,long-weekend days,22,Simple: OLS on last week,42.866,33.317,52.355,-1.481,-2.28,-0.851
+P: train 2023-2025,long-weekend days,22,Strong: GBM (L1),12.305,-1.203,22.238,-0.277,-0.641,0.017
+P: train 2023-2025,long-weekend days,22,Strong: GBM (log),7.141,0.258,16.422,-0.152,-0.306,-0.007
+P: train 2023-2025,long-weekend days,22,Flexible linear: large one-hot ridge,7.814,-3.302,17.532,-0.167,-0.395,0.058
+P: train 2023-2025,holiday days (LW + eve),27,Trivial: training mean,44.372,36.352,53.364,-1.831,-2.382,-1.296
+P: train 2023-2025,holiday days (LW + eve),27,"Last week, same hour",35.97,25.357,44.473,-1.289,-1.988,-0.659
+P: train 2023-2025,holiday days (LW + eve),27,Same holiday last time,3.518,-23.203,23.037,-0.084,-0.705,0.457
+P: train 2023-2025,holiday days (LW + eve),27,Seasonal mean: hour x weekday,40.67,30.265,50.677,-1.573,-2.156,-0.972
+P: train 2023-2025,holiday days (LW + eve),27,Simple: OLS on last week,38.247,29.776,46.676,-1.422,-2.074,-0.852
+P: train 2023-2025,holiday days (LW + eve),27,Strong: GBM (L1),7.157,-4.218,16.91,-0.177,-0.471,0.079
+P: train 2023-2025,holiday days (LW + eve),27,Strong: GBM (log),1.511,-9.665,12.387,-0.035,-0.254,0.235
+P: train 2023-2025,holiday days (LW + eve),27,Flexible linear: large one-hot ridge,5.021,-4.059,13.177,-0.121,-0.318,0.089
+P: train 2023-2025,LW 08-18h,22,Trivial: training mean,43.119,27.27,54.028,-2.484,-4.198,-1.052
+P: train 2023-2025,LW 08-18h,22,"Last week, same hour",44.208,28.645,55.953,-2.596,-4.406,-1.077
+P: train 2023-2025,LW 08-18h,22,Same holiday last time,13.269,-21.279,35.047,-0.501,-1.988,0.601
+P: train 2023-2025,LW 08-18h,22,Seasonal mean: hour x weekday,52.187,40.736,63.681,-3.576,-4.964,-2.251
+P: train 2023-2025,LW 08-18h,22,Simple: OLS on last week,42.8,24.234,54.846,-2.451,-4.266,-0.881
+P: train 2023-2025,LW 08-18h,22,Strong: GBM (L1),18.256,1.538,31.189,-0.732,-1.557,-0.041
+P: train 2023-2025,LW 08-18h,22,Strong: GBM (log),7.645,0.286,17.062,-0.271,-0.547,-0.012
+P: train 2023-2025,LW 08-18h,22,Flexible linear: large one-hot ridge,11.065,-3.252,21.807,-0.408,-0.918,0.09
+P: train 2023-2025,first day 10-18h,5,Trivial: training mean,52.661,34.842,69.349,-9.477,-12.849,-4.397
+P: train 2023-2025,first day 10-18h,5,"Last week, same hour",53.439,35.473,70.091,-9.778,-13.299,-4.158
+P: train 2023-2025,first day 10-18h,5,Same holiday last time,19.298,-38.315,46.808,-2.037,-8.723,3.072
+P: train 2023-2025,first day 10-18h,5,Seasonal mean: hour x weekday,47.826,33.051,65.604,-7.81,-10.233,-4.043
+P: train 2023-2025,first day 10-18h,5,Simple: OLS on last week,52.765,36.062,69.603,-9.517,-13.04,-4.338
+P: train 2023-2025,first day 10-18h,5,Strong: GBM (L1),31.684,7.149,52.194,-3.951,-6.216,-0.708
+P: train 2023-2025,first day 10-18h,5,Strong: GBM (log),4.476,-3.581,18.235,-0.399,-1.121,0.322
+P: train 2023-2025,first day 10-18h,5,Flexible linear: large one-hot ridge,17.115,-5.847,34.426,-1.759,-3.206,0.396
+P: train 2023-2025,eve 16-23h,5,Trivial: training mean,9.971,-45.345,22.381,-0.883,-2.994,1.681
+P: train 2023-2025,eve 16-23h,5,"Last week, same hour",21.366,-13.073,31.417,-2.165,-4.855,0.608
+P: train 2023-2025,eve 16-23h,5,Same holiday last time,-1.164,-53.71,23.194,0.092,-2.392,2.72
+P: train 2023-2025,eve 16-23h,5,Seasonal mean: hour x weekday,16.615,-37.962,28.281,-1.588,-3.984,1.473
+P: train 2023-2025,eve 16-23h,5,Simple: OLS on last week,15.324,-31.684,27.39,-1.442,-3.963,1.295
+P: train 2023-2025,eve 16-23h,5,Strong: GBM (L1),-5.515,-17.241,4.38,0.416,-0.267,1.287
+P: train 2023-2025,eve 16-23h,5,Strong: GBM (log),-19.122,-63.448,18.888,1.279,-1.167,3.855
+P: train 2023-2025,eve 16-23h,5,Flexible linear: large one-hot ridge,-2.367,-7.622,9.439,0.184,-0.445,0.742
+P: train 2023-2025,Saturday 08-17h,29,Trivial: training mean,6.872,-27.912,26.629,-0.655,-3.319,1.876
+P: train 2023-2025,Saturday 08-17h,29,"Last week, same hour",-2.399,-39.318,19.976,0.208,-2.259,2.491
+P: train 2023-2025,Saturday 08-17h,29,Same holiday last time,-2.399,-38.081,20.416,0.208,-2.214,2.459
+P: train 2023-2025,Saturday 08-17h,29,Seasonal mean: hour x weekday,3.23,-0.049,6.922,-0.296,-0.584,0.005
+P: train 2023-2025,Saturday 08-17h,29,Simple: OLS on last week,-18.534,-63.518,6.702,1.389,-0.621,3.294
+P: train 2023-2025,Saturday 08-17h,29,Strong: GBM (L1),-8.23,-22.93,2.411,0.675,-0.243,1.501
+P: train 2023-2025,Saturday 08-17h,29,Strong: GBM (log),1.389,-0.406,3.472,-0.125,-0.29,0.039
+P: train 2023-2025,Saturday 08-17h,29,Flexible linear: large one-hot ridge,5.738,0.083,11.709,-0.541,-1.036,-0.008
+P: train 2023-2025,congested (actual > 40),75,Trivial: training mean,27.91,21.019,34.369,-5.091,-6.384,-3.746
+P: train 2023-2025,congested (actual > 40),75,"Last week, same hour",5.057,-12.927,18.261,-0.7,-2.857,1.518
+P: train 2023-2025,congested (actual > 40),75,Same holiday last time,-9.453,-30.598,7.581,1.136,-1.014,3.188
+P: train 2023-2025,congested (actual > 40),75,Seasonal mean: hour x weekday,0.965,-7.113,9.497,-0.128,-1.325,0.884
+P: train 2023-2025,congested (actual > 40),75,Simple: OLS on last week,11.078,-1.709,20.968,-1.638,-3.482,0.224
+P: train 2023-2025,congested (actual > 40),75,Strong: GBM (L1),9.076,5.17,13.435,-1.313,-1.932,-0.725
+P: train 2023-2025,congested (actual > 40),75,Strong: GBM (log),-9.485,-13.911,-6.641,1.139,0.822,1.56
+P: train 2023-2025,congested (actual > 40),75,Flexible linear: large one-hot ridge,-4.651,-7.52,-1.348,0.584,0.175,0.898
+S: train 2023-2024,all,243,Trivial: training mean,47.651,43.059,52.204,-1.376,-1.517,-1.228
+S: train 2023-2024,all,243,"Last week, same hour",25.235,14.573,36.105,-0.51,-0.808,-0.258
+S: train 2023-2024,all,243,Same holiday last time,19.924,7.253,30.865,-0.376,-0.642,-0.126
+S: train 2023-2024,all,243,Seasonal mean: hour x weekday,22.994,18.264,28.008,-0.451,-0.556,-0.353
+S: train 2023-2024,all,243,Simple: OLS on last week,32.08,25.068,38.395,-0.714,-0.887,-0.547
+S: train 2023-2024,all,243,Strong: GBM (L1),-2.165,-4.812,0.381,0.032,-0.006,0.068
+S: train 2023-2024,all,243,Strong: GBM (log),9.304,6.397,12.536,-0.155,-0.201,-0.109
+S: train 2023-2024,all,243,Flexible linear: large one-hot ridge,4.385,1.333,7.56,-0.069,-0.124,-0.021
+S: train 2023-2024,ordinary days,215,Trivial: training mean,48.73,43.6,53.665,-1.334,-1.484,-1.179
+S: train 2023-2024,ordinary days,215,"Last week, same hour",23.077,8.457,34.904,-0.421,-0.708,-0.141
+S: train 2023-2024,ordinary days,215,Same holiday last time,23.077,8.766,34.9,-0.421,-0.718,-0.133
+S: train 2023-2024,ordinary days,215,Seasonal mean: hour x weekday,18.147,13.678,23.08,-0.311,-0.369,-0.252
+S: train 2023-2024,ordinary days,215,Simple: OLS on last week,31.131,22.883,38.746,-0.634,-0.808,-0.449
+S: train 2023-2024,ordinary days,215,Strong: GBM (L1),-3.732,-5.978,-1.806,0.05,0.026,0.076
+S: train 2023-2024,ordinary days,215,Strong: GBM (log),8.271,5.629,11.284,-0.127,-0.161,-0.091
+S: train 2023-2024,ordinary days,215,Flexible linear: large one-hot ridge,2.942,0.153,5.913,-0.043,-0.082,-0.002
+S: train 2023-2024,long-weekend days,22,Trivial: training mean,47.767,39.599,57.347,-1.895,-2.531,-1.317
+S: train 2023-2024,long-weekend days,22,"Last week, same hour",35.765,23.014,44.403,-1.154,-1.975,-0.471
+S: train 2023-2024,long-weekend days,22,Same holiday last time,3.047,-30.992,25.619,-0.065,-0.777,0.549
+S: train 2023-2024,long-weekend days,22,Seasonal mean: hour x weekday,46.631,37.058,57.639,-1.811,-2.452,-1.199
+S: train 2023-2024,long-weekend days,22,Simple: OLS on last week,40.412,31.162,49.754,-1.405,-2.139,-0.809
+S: train 2023-2024,long-weekend days,22,Strong: GBM (L1),10.299,2.111,18.508,-0.238,-0.488,-0.042
+S: train 2023-2024,long-weekend days,22,Strong: GBM (log),21.1,10.956,32.929,-0.554,-0.86,-0.28
+S: train 2023-2024,long-weekend days,22,Flexible linear: large one-hot ridge,15.511,4.149,25.348,-0.38,-0.688,-0.075
+S: train 2023-2024,holiday days (LW + eve),27,Trivial: training mean,41.853,32.733,50.748,-1.731,-2.34,-1.128
+S: train 2023-2024,holiday days (LW + eve),27,"Last week, same hour",32.912,22.274,40.813,-1.18,-1.888,-0.554
+S: train 2023-2024,holiday days (LW + eve),27,Same holiday last time,-1.09,-29.933,18.998,0.026,-0.575,0.57
+S: train 2023-2024,holiday days (LW + eve),27,Seasonal mean: hour x weekday,39.477,28.061,49.847,-1.569,-2.199,-0.945
+S: train 2023-2024,holiday days (LW + eve),27,Simple: OLS on last week,35.609,26.237,44.094,-1.33,-1.976,-0.742
+S: train 2023-2024,holiday days (LW + eve),27,Strong: GBM (L1),4.658,-6.134,13.889,-0.117,-0.366,0.136
+S: train 2023-2024,holiday days (LW + eve),27,Strong: GBM (log),13.999,2.986,25.935,-0.391,-0.691,-0.075
+S: train 2023-2024,holiday days (LW + eve),27,Flexible linear: large one-hot ridge,10.485,-0.574,19.633,-0.282,-0.591,0.011
+S: train 2023-2024,LW 08-18h,22,Trivial: training mean,39.339,21.223,50.608,-2.264,-4.022,-0.803
+S: train 2023-2024,LW 08-18h,22,"Last week, same hour",40.56,23.516,52.033,-2.382,-4.079,-0.881
+S: train 2023-2024,LW 08-18h,22,Same holiday last time,7.599,-34.129,31.955,-0.287,-1.754,0.914
+S: train 2023-2024,LW 08-18h,22,Seasonal mean: hour x weekday,50.58,39.493,61.513,-3.572,-4.871,-2.241
+S: train 2023-2024,LW 08-18h,22,Simple: OLS on last week,38.992,22.588,51.039,-2.231,-3.874,-0.851
+S: train 2023-2024,LW 08-18h,22,Strong: GBM (L1),13.381,3.755,22.772,-0.539,-1.03,-0.113
+S: train 2023-2024,LW 08-18h,22,Strong: GBM (log),19.517,10.073,30.371,-0.846,-1.285,-0.434
+S: train 2023-2024,LW 08-18h,22,Flexible linear: large one-hot ridge,19.113,6.067,29.544,-0.825,-1.491,-0.191
+S: train 2023-2024,first day 10-18h,5,Trivial: training mean,49.961,35.973,66.775,-8.977,-12.085,-4.663
+S: train 2023-2024,first day 10-18h,5,"Last week, same hour",50.862,36.44,65.683,-9.307,-12.569,-4.629
+S: train 2023-2024,first day 10-18h,5,Same holiday last time,14.832,-49.896,44.283,-1.566,-8.228,4.09
+S: train 2023-2024,first day 10-18h,5,Seasonal mean: hour x weekday,46.716,34.092,63.843,-7.883,-10.067,-4.959
+S: train 2023-2024,first day 10-18h,5,Simple: OLS on last week,50.068,35.541,67.052,-9.015,-12.279,-4.769
+S: train 2023-2024,first day 10-18h,5,Strong: GBM (L1),22.223,6.873,42.149,-2.569,-4.237,-0.901
+S: train 2023-2024,first day 10-18h,5,Strong: GBM (log),16.108,3.209,34.971,-1.726,-2.535,-0.486
+S: train 2023-2024,first day 10-18h,5,Flexible linear: large one-hot ridge,26.597,8.622,44.589,-3.258,-5.143,-0.931
+S: train 2023-2024,eve 16-23h,5,Trivial: training mean,5.812,-126.241,42.275,-0.514,-5.495,4.586
+S: train 2023-2024,eve 16-23h,5,"Last week, same hour",17.827,-83.874,50.186,-1.806,-7.113,3.572
+S: train 2023-2024,eve 16-23h,5,Same holiday last time,-5.717,-56.615,20.736,0.45,-2.661,2.983
+S: train 2023-2024,eve 16-23h,5,Seasonal mean: hour x weekday,14.033,-110.937,47.333,-1.359,-6.283,4.071
+S: train 2023-2024,eve 16-23h,5,Simple: OLS on last week,11.153,-112.912,46.832,-1.045,-6.4,4.087
+S: train 2023-2024,eve 16-23h,5,Strong: GBM (L1),-13.799,-52.279,19.489,1.01,-1.47,3.506
+S: train 2023-2024,eve 16-23h,5,Strong: GBM (log),-16.662,-55.286,21.815,1.189,-1.428,3.671
+S: train 2023-2024,eve 16-23h,5,Flexible linear: large one-hot ridge,-4.841,-57.491,29.023,0.384,-2.618,3.552
+S: train 2023-2024,Saturday 08-17h,29,Trivial: training mean,6.514,-30.735,26.161,-0.62,-3.279,2.016
+S: train 2023-2024,Saturday 08-17h,29,"Last week, same hour",-2.591,-38.948,20.185,0.225,-2.257,2.436
+S: train 2023-2024,Saturday 08-17h,29,Same holiday last time,-2.591,-40.582,20.537,0.225,-2.234,2.514
+S: train 2023-2024,Saturday 08-17h,29,Seasonal mean: hour x weekday,4.187,0.116,8.553,-0.389,-0.733,-0.011
+S: train 2023-2024,Saturday 08-17h,29,Simple: OLS on last week,-18.758,-66.045,5.76,1.405,-0.597,3.363
+S: train 2023-2024,Saturday 08-17h,29,Strong: GBM (L1),-4.29,-10.109,0.264,0.366,-0.027,0.735
+S: train 2023-2024,Saturday 08-17h,29,Strong: GBM (log),1.133,-0.644,2.963,-0.102,-0.239,0.061
+S: train 2023-2024,Saturday 08-17h,29,Flexible linear: large one-hot ridge,7.785,0.391,15.025,-0.751,-1.384,-0.038
+S: train 2023-2024,congested (actual > 40),75,Trivial: training mean,29.04,22.743,35.234,-5.289,-6.457,-4.072
+S: train 2023-2024,congested (actual > 40),75,"Last week, same hour",6.691,-11.454,20.737,-0.927,-3.247,1.351
+S: train 2023-2024,congested (actual > 40),75,Same holiday last time,-7.569,-28.977,8.458,0.909,-1.168,3.035
+S: train 2023-2024,congested (actual > 40),75,Seasonal mean: hour x weekday,3.824,-4.711,12.884,-0.514,-1.76,0.577
+S: train 2023-2024,congested (actual > 40),75,Simple: OLS on last week,12.88,1.191,22.88,-1.911,-3.627,-0.166
+S: train 2023-2024,congested (actual > 40),75,Strong: GBM (L1),5.202,2.512,8.372,-0.709,-1.107,-0.342
+S: train 2023-2024,congested (actual > 40),75,Strong: GBM (log),-5.146,-7.255,-3.076,0.632,0.368,0.883
+S: train 2023-2024,congested (actual > 40),75,Flexible linear: large one-hot ridge,-2.458,-7.329,2.494,0.31,-0.33,0.872

@@ -1,0 +1,19 @@
+﻿setting,model,mae,rmse,r2
+P: train 2023-2025,Trivial: training mean,2.87,5.227,-0.002
+P: train 2023-2025,"Last week, same hour",2.022,5.619,-0.158
+P: train 2023-2025,Same holiday last time,1.888,5.32,-0.038
+P: train 2023-2025,Seasonal mean: hour x weekday,1.938,4.396,0.291
+P: train 2023-2025,Simple: OLS on last week,2.194,4.776,0.163
+P: train 2023-2025,Ours: compact median linear,1.492,4.054,0.397
+P: train 2023-2025,Strong: GBM (L1),1.455,4.179,0.36
+P: train 2023-2025,Strong: GBM (log),1.632,3.91,0.439
+P: train 2023-2025,Flexible linear: large one-hot ridge,1.519,4.053,0.398
+S: train 2023-2024,Trivial: training mean,2.888,5.229,-0.002
+S: train 2023-2024,"Last week, same hour",2.022,5.619,-0.158
+S: train 2023-2024,Same holiday last time,1.888,5.32,-0.038
+S: train 2023-2024,Seasonal mean: hour x weekday,1.963,4.463,0.27
+S: train 2023-2024,Simple: OLS on last week,2.226,4.769,0.166
+S: train 2023-2024,Ours: compact median linear,1.512,4.082,0.389
+S: train 2023-2024,Strong: GBM (L1),1.48,4.099,0.384
+S: train 2023-2024,Strong: GBM (log),1.667,4.006,0.412
+S: train 2023-2024,Flexible linear: large one-hot ridge,1.581,4.152,0.368

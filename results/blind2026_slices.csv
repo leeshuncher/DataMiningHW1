@@ -1,0 +1,163 @@
+﻿setting,slice,days,rows,model,mae
+P: train 2023-2025,all,243,5817,Trivial: training mean,2.87
+P: train 2023-2025,ordinary days,215,5146,Trivial: training mean,2.717
+P: train 2023-2025,long-weekend days,22,527,Trivial: training mean,3.956
+P: train 2023-2025,holiday days (LW + eve),27,647,Trivial: training mean,4.126
+P: train 2023-2025,LW 08-18h,22,219,Trivial: training mean,5.76
+P: train 2023-2025,first day 10-18h,5,40,Trivial: training mean,17.997
+P: train 2023-2025,eve 16-23h,5,40,Trivial: training mean,8.85
+P: train 2023-2025,Saturday 08-17h,29,261,Trivial: training mean,9.536
+P: train 2023-2025,congested (actual > 40),75,316,Trivial: training mean,18.241
+P: train 2023-2025,all,243,5817,"Last week, same hour",2.022
+P: train 2023-2025,ordinary days,215,5146,"Last week, same hour",1.824
+P: train 2023-2025,long-weekend days,22,527,"Last week, same hour",3.226
+P: train 2023-2025,holiday days (LW + eve),27,647,"Last week, same hour",3.585
+P: train 2023-2025,LW 08-18h,22,219,"Last week, same hour",5.872
+P: train 2023-2025,first day 10-18h,5,40,"Last week, same hour",18.298
+P: train 2023-2025,eve 16-23h,5,40,"Last week, same hour",10.133
+P: train 2023-2025,Saturday 08-17h,29,261,"Last week, same hour",8.673
+P: train 2023-2025,congested (actual > 40),75,316,"Last week, same hour",13.85
+P: train 2023-2025,all,243,5817,Same holiday last time,1.888
+P: train 2023-2025,ordinary days,215,5146,Same holiday last time,1.824
+P: train 2023-2025,long-weekend days,22,527,Same holiday last time,2.137
+P: train 2023-2025,holiday days (LW + eve),27,647,Same holiday last time,2.379
+P: train 2023-2025,LW 08-18h,22,219,Same holiday last time,3.777
+P: train 2023-2025,first day 10-18h,5,40,Same holiday last time,10.557
+P: train 2023-2025,eve 16-23h,5,40,Same holiday last time,7.876
+P: train 2023-2025,Saturday 08-17h,29,261,Same holiday last time,8.673
+P: train 2023-2025,congested (actual > 40),75,316,Same holiday last time,12.014
+P: train 2023-2025,all,243,5817,Seasonal mean: hour x weekday,1.938
+P: train 2023-2025,ordinary days,215,5146,Seasonal mean: hour x weekday,1.699
+P: train 2023-2025,long-weekend days,22,527,Seasonal mean: hour x weekday,3.763
+P: train 2023-2025,holiday days (LW + eve),27,647,Seasonal mean: hour x weekday,3.869
+P: train 2023-2025,LW 08-18h,22,219,Seasonal mean: hour x weekday,6.852
+P: train 2023-2025,first day 10-18h,5,40,Seasonal mean: hour x weekday,16.329
+P: train 2023-2025,eve 16-23h,5,40,Seasonal mean: hour x weekday,9.556
+P: train 2023-2025,Saturday 08-17h,29,261,Seasonal mean: hour x weekday,9.177
+P: train 2023-2025,congested (actual > 40),75,316,Seasonal mean: hour x weekday,13.278
+P: train 2023-2025,all,243,5817,Simple: OLS on last week,2.194
+P: train 2023-2025,ordinary days,215,5146,Simple: OLS on last week,2.004
+P: train 2023-2025,long-weekend days,22,527,Simple: OLS on last week,3.455
+P: train 2023-2025,holiday days (LW + eve),27,647,Simple: OLS on last week,3.717
+P: train 2023-2025,LW 08-18h,22,219,Simple: OLS on last week,5.728
+P: train 2023-2025,first day 10-18h,5,40,Simple: OLS on last week,18.037
+P: train 2023-2025,eve 16-23h,5,40,Simple: OLS on last week,9.41
+P: train 2023-2025,Saturday 08-17h,29,261,Simple: OLS on last week,7.492
+P: train 2023-2025,congested (actual > 40),75,316,Simple: OLS on last week,14.788
+P: train 2023-2025,all,243,5817,Ours: compact median linear,1.492
+P: train 2023-2025,ordinary days,215,5146,Ours: compact median linear,1.394
+P: train 2023-2025,long-weekend days,22,527,Ours: compact median linear,1.974
+P: train 2023-2025,holiday days (LW + eve),27,647,Ours: compact median linear,2.295
+P: train 2023-2025,LW 08-18h,22,219,Ours: compact median linear,3.276
+P: train 2023-2025,first day 10-18h,5,40,Ours: compact median linear,8.52
+P: train 2023-2025,eve 16-23h,5,40,Ours: compact median linear,7.968
+P: train 2023-2025,Saturday 08-17h,29,261,Ours: compact median linear,8.881
+P: train 2023-2025,congested (actual > 40),75,316,Ours: compact median linear,13.15
+P: train 2023-2025,all,243,5817,Strong: GBM (L1),1.455
+P: train 2023-2025,ordinary days,215,5146,Strong: GBM (L1),1.331
+P: train 2023-2025,long-weekend days,22,527,Strong: GBM (L1),2.251
+P: train 2023-2025,holiday days (LW + eve),27,647,Strong: GBM (L1),2.472
+P: train 2023-2025,LW 08-18h,22,219,Strong: GBM (L1),4.008
+P: train 2023-2025,first day 10-18h,5,40,Strong: GBM (L1),12.471
+P: train 2023-2025,eve 16-23h,5,40,Strong: GBM (L1),7.551
+P: train 2023-2025,Saturday 08-17h,29,261,Strong: GBM (L1),8.205
+P: train 2023-2025,congested (actual > 40),75,316,Strong: GBM (L1),14.462
+P: train 2023-2025,all,243,5817,Strong: GBM (log),1.632
+P: train 2023-2025,ordinary days,215,5146,Strong: GBM (log),1.548
+P: train 2023-2025,long-weekend days,22,527,Strong: GBM (log),2.126
+P: train 2023-2025,holiday days (LW + eve),27,647,Strong: GBM (log),2.331
+P: train 2023-2025,LW 08-18h,22,219,Strong: GBM (log),3.547
+P: train 2023-2025,first day 10-18h,5,40,Strong: GBM (log),8.919
+P: train 2023-2025,eve 16-23h,5,40,Strong: GBM (log),6.689
+P: train 2023-2025,Saturday 08-17h,29,261,Strong: GBM (log),9.006
+P: train 2023-2025,congested (actual > 40),75,316,Strong: GBM (log),12.01
+P: train 2023-2025,all,243,5817,Flexible linear: large one-hot ridge,1.519
+P: train 2023-2025,ordinary days,215,5146,Flexible linear: large one-hot ridge,1.41
+P: train 2023-2025,long-weekend days,22,527,Flexible linear: large one-hot ridge,2.141
+P: train 2023-2025,holiday days (LW + eve),27,647,Flexible linear: large one-hot ridge,2.417
+P: train 2023-2025,LW 08-18h,22,219,Flexible linear: large one-hot ridge,3.684
+P: train 2023-2025,first day 10-18h,5,40,Flexible linear: large one-hot ridge,10.279
+P: train 2023-2025,eve 16-23h,5,40,Flexible linear: large one-hot ridge,7.784
+P: train 2023-2025,Saturday 08-17h,29,261,Flexible linear: large one-hot ridge,9.421
+P: train 2023-2025,congested (actual > 40),75,316,Flexible linear: large one-hot ridge,12.565
+S: train 2023-2024,all,243,5817,Trivial: training mean,2.888
+S: train 2023-2024,ordinary days,215,5146,Trivial: training mean,2.737
+S: train 2023-2024,long-weekend days,22,527,Trivial: training mean,3.967
+S: train 2023-2024,holiday days (LW + eve),27,647,Trivial: training mean,4.136
+S: train 2023-2024,LW 08-18h,22,219,Trivial: training mean,5.754
+S: train 2023-2024,first day 10-18h,5,40,Trivial: training mean,17.968
+S: train 2023-2024,eve 16-23h,5,40,Trivial: training mean,8.84
+S: train 2023-2024,Saturday 08-17h,29,261,Trivial: training mean,9.517
+S: train 2023-2024,congested (actual > 40),75,316,Trivial: training mean,18.212
+S: train 2023-2024,all,243,5817,"Last week, same hour",2.022
+S: train 2023-2024,ordinary days,215,5146,"Last week, same hour",1.824
+S: train 2023-2024,long-weekend days,22,527,"Last week, same hour",3.226
+S: train 2023-2024,holiday days (LW + eve),27,647,"Last week, same hour",3.585
+S: train 2023-2024,LW 08-18h,22,219,"Last week, same hour",5.872
+S: train 2023-2024,first day 10-18h,5,40,"Last week, same hour",18.298
+S: train 2023-2024,eve 16-23h,5,40,"Last week, same hour",10.133
+S: train 2023-2024,Saturday 08-17h,29,261,"Last week, same hour",8.673
+S: train 2023-2024,congested (actual > 40),75,316,"Last week, same hour",13.85
+S: train 2023-2024,all,243,5817,Same holiday last time,1.888
+S: train 2023-2024,ordinary days,215,5146,Same holiday last time,1.824
+S: train 2023-2024,long-weekend days,22,527,Same holiday last time,2.137
+S: train 2023-2024,holiday days (LW + eve),27,647,Same holiday last time,2.379
+S: train 2023-2024,LW 08-18h,22,219,Same holiday last time,3.777
+S: train 2023-2024,first day 10-18h,5,40,Same holiday last time,10.557
+S: train 2023-2024,eve 16-23h,5,40,Same holiday last time,7.876
+S: train 2023-2024,Saturday 08-17h,29,261,Same holiday last time,8.673
+S: train 2023-2024,congested (actual > 40),75,316,Same holiday last time,12.014
+S: train 2023-2024,all,243,5817,Seasonal mean: hour x weekday,1.963
+S: train 2023-2024,ordinary days,215,5146,Seasonal mean: hour x weekday,1.714
+S: train 2023-2024,long-weekend days,22,527,Seasonal mean: hour x weekday,3.883
+S: train 2023-2024,holiday days (LW + eve),27,647,Seasonal mean: hour x weekday,3.974
+S: train 2023-2024,LW 08-18h,22,219,Seasonal mean: hour x weekday,7.063
+S: train 2023-2024,first day 10-18h,5,40,Seasonal mean: hour x weekday,16.874
+S: train 2023-2024,eve 16-23h,5,40,Seasonal mean: hour x weekday,9.686
+S: train 2023-2024,Saturday 08-17h,29,261,Seasonal mean: hour x weekday,9.286
+S: train 2023-2024,congested (actual > 40),75,316,Seasonal mean: hour x weekday,13.437
+S: train 2023-2024,all,243,5817,Simple: OLS on last week,2.226
+S: train 2023-2024,ordinary days,215,5146,Simple: OLS on last week,2.037
+S: train 2023-2024,long-weekend days,22,527,Simple: OLS on last week,3.477
+S: train 2023-2024,holiday days (LW + eve),27,647,Simple: OLS on last week,3.735
+S: train 2023-2024,LW 08-18h,22,219,Simple: OLS on last week,5.721
+S: train 2023-2024,first day 10-18h,5,40,Simple: OLS on last week,18.006
+S: train 2023-2024,eve 16-23h,5,40,Simple: OLS on last week,9.372
+S: train 2023-2024,Saturday 08-17h,29,261,Simple: OLS on last week,7.492
+S: train 2023-2024,congested (actual > 40),75,316,Simple: OLS on last week,14.834
+S: train 2023-2024,all,243,5817,Ours: compact median linear,1.512
+S: train 2023-2024,ordinary days,215,5146,Ours: compact median linear,1.403
+S: train 2023-2024,long-weekend days,22,527,Ours: compact median linear,2.072
+S: train 2023-2024,holiday days (LW + eve),27,647,Ours: compact median linear,2.405
+S: train 2023-2024,LW 08-18h,22,219,Ours: compact median linear,3.49
+S: train 2023-2024,first day 10-18h,5,40,Ours: compact median linear,8.991
+S: train 2023-2024,eve 16-23h,5,40,Ours: compact median linear,8.327
+S: train 2023-2024,Saturday 08-17h,29,261,Ours: compact median linear,8.897
+S: train 2023-2024,congested (actual > 40),75,316,Ours: compact median linear,12.923
+S: train 2023-2024,all,243,5817,Strong: GBM (L1),1.48
+S: train 2023-2024,ordinary days,215,5146,Strong: GBM (L1),1.353
+S: train 2023-2024,long-weekend days,22,527,Strong: GBM (L1),2.31
+S: train 2023-2024,holiday days (LW + eve),27,647,Strong: GBM (L1),2.522
+S: train 2023-2024,LW 08-18h,22,219,Strong: GBM (L1),4.03
+S: train 2023-2024,first day 10-18h,5,40,Strong: GBM (L1),11.56
+S: train 2023-2024,eve 16-23h,5,40,Strong: GBM (L1),7.317
+S: train 2023-2024,Saturday 08-17h,29,261,Strong: GBM (L1),8.531
+S: train 2023-2024,congested (actual > 40),75,316,Strong: GBM (L1),13.632
+S: train 2023-2024,all,243,5817,Strong: GBM (log),1.667
+S: train 2023-2024,ordinary days,215,5146,Strong: GBM (log),1.53
+S: train 2023-2024,long-weekend days,22,527,Strong: GBM (log),2.626
+S: train 2023-2024,holiday days (LW + eve),27,647,Strong: GBM (log),2.796
+S: train 2023-2024,LW 08-18h,22,219,Strong: GBM (log),4.337
+S: train 2023-2024,first day 10-18h,5,40,Strong: GBM (log),10.717
+S: train 2023-2024,eve 16-23h,5,40,Strong: GBM (log),7.137
+S: train 2023-2024,Saturday 08-17h,29,261,Strong: GBM (log),8.999
+S: train 2023-2024,congested (actual > 40),75,316,Strong: GBM (log),12.291
+S: train 2023-2024,all,243,5817,Flexible linear: large one-hot ridge,1.581
+S: train 2023-2024,ordinary days,215,5146,Flexible linear: large one-hot ridge,1.446
+S: train 2023-2024,long-weekend days,22,527,Flexible linear: large one-hot ridge,2.453
+S: train 2023-2024,holiday days (LW + eve),27,647,Flexible linear: large one-hot ridge,2.687
+S: train 2023-2024,LW 08-18h,22,219,Flexible linear: large one-hot ridge,4.315
+S: train 2023-2024,first day 10-18h,5,40,Flexible linear: large one-hot ridge,12.249
+S: train 2023-2024,eve 16-23h,5,40,Flexible linear: large one-hot ridge,7.942
+S: train 2023-2024,Saturday 08-17h,29,261,Flexible linear: large one-hot ridge,9.648
+S: train 2023-2024,congested (actual > 40),75,316,Flexible linear: large one-hot ridge,12.613
