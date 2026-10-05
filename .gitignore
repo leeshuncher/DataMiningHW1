@@ -1,2 +1,3 @@
-data/
+data/arena/
 __pycache__/
+*.log
