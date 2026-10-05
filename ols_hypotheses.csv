@@ -1,0 +1,12 @@
+﻿hypothesis,contrast,claim,beta_diff,effect_%,se,p_two_sided,p_one_sided
+H1 first-day morning slower than ordinary Saturday morning,lwf_am - sat_am = 0,first-day morning (6-10h) vs Saturday morning; H1 predicts > 0,-0.2034,-18.4,0.0332,0.0,1.0
+H1b first-day afternoon peak vs Saturday afternoon,lwf_pm - sat_pm = 0,14-18h,0.1065,11.2,0.0626,0.089,
+"H2 last day vs ordinary weekday, am",lwl_am = 0,H2 predicts about 0,-0.0032,-0.3,0.0038,0.3999,
+"H2 last day vs ordinary weekday, mid",lwl_mid = 0,H2 predicts about 0,-0.1047,-9.9,0.0264,0.0001,
+"H2 last day vs ordinary weekday, pm",lwl_pm = 0,H2 predicts about 0,-0.0063,-0.6,0.0038,0.0915,
+"H2 last day vs ordinary weekday, ev",lwl_ev = 0,H2 predicts about 0,0.0041,0.4,0.0026,0.11,
+H2 joint: last day = ordinary weekday in all blocks,,joint Wald,,,,0.0,
+H3a eve (Friday) evening vs ordinary Friday evening,eveF_ev = 0,"beyond ordinary Friday, 18-22h; H3 predicts > 0",0.112,11.9,0.0223,0.0,0.0
+H3b eve (other weekday) evening vs ordinary weekday evening,eveO_ev = 0,18-22h,0.2542,28.9,0.0792,0.0013,0.0007
+H3c eve (other weekday) afternoon vs ordinary weekday,eveO_pm = 0,14-18h,0.1671,18.2,0.0729,0.0219,0.0109
+H4 longer holidays (>=4 days) have a lower first-day afternoon peak,lwf_pm_long4 = 0,H4 predicts < 0,-0.2085,-18.8,0.1094,0.0567,0.0284

@@ -1,0 +1,8 @@
+﻿,Saturday,long-weekend day,daytime 08-18h,same slot last week,"mean of same slot, last 4 weeks",Saturday x daytime,long weekend x daytime
+Saturday,1.0,-0.09,-0.0,0.3,0.36,0.62,-0.06
+long-weekend day,-0.09,1.0,-0.0,-0.01,0.02,-0.06,0.63
+daytime 08-18h,-0.0,-0.0,1.0,0.41,0.5,0.27,0.18
+same slot last week,0.3,-0.01,0.41,1.0,0.81,0.51,0.06
+"mean of same slot, last 4 weeks",0.36,0.02,0.5,0.81,1.0,0.62,0.12
+Saturday x daytime,0.62,-0.06,0.27,0.51,0.62,1.0,-0.04
+long weekend x daytime,-0.06,0.63,0.18,0.06,0.12,-0.04,1.0

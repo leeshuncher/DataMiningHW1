@@ -1,0 +1,109 @@
+﻿slice,days,baseline,improvement_%,ci95_low,ci95_high,gap_minutes
+all slots,365,Trivial: training mean,49.6,46.1,53.4,1.398
+all slots,365,Persistence-type: last week same slot,25.1,16.3,33.6,0.477
+all slots,365,Same holiday last time (else last week),21.2,11.9,29.9,0.382
+all slots,365,Seasonal mean: slot x weekday,18.5,14.2,22.9,0.322
+all slots,365,Simple: OLS on last week only,32.3,26.8,38.0,0.679
+all slots,365,Strong: GBM (L1),-3.2,-6.0,-0.7,-0.044
+all slots,365,Strong: GBM (log),5.1,2.6,7.8,0.077
+all slots,365,Flexible linear: large one-hot Ridge,1.2,-1.8,4.0,0.018
+all slots,365,Exploratory: ours + last-year feature,-2.3,-3.3,-1.2,-0.032
+ordinary (weekday+sat+sun),323,Trivial: training mean,50.7,46.7,54.9,1.386
+ordinary (weekday+sat+sun),323,Persistence-type: last week same slot,22.4,12.2,32.0,0.389
+ordinary (weekday+sat+sun),323,Same holiday last time (else last week),22.4,11.8,31.6,0.389
+ordinary (weekday+sat+sun),323,Seasonal mean: slot x weekday,13.5,9.7,17.6,0.21
+ordinary (weekday+sat+sun),323,Simple: OLS on last week only,31.5,25.0,37.8,0.619
+ordinary (weekday+sat+sun),323,Strong: GBM (L1),-2.1,-3.7,-0.6,-0.027
+ordinary (weekday+sat+sun),323,Strong: GBM (log),4.6,2.6,7.0,0.066
+ordinary (weekday+sat+sun),323,Flexible linear: large one-hot Ridge,0.7,-1.7,3.4,0.01
+ordinary (weekday+sat+sun),323,Exploratory: ours + last-year feature,-2.2,-3.3,-1.1,-0.029
+Saturday 08-17h,42,Trivial: training mean,23.4,5.6,34.9,2.762
+Saturday 08-17h,42,Persistence-type: last week same slot,12.2,-10.1,30.3,1.254
+Saturday 08-17h,42,Same holiday last time (else last week),12.2,-11.2,28.8,1.254
+Saturday 08-17h,42,Seasonal mean: slot x weekday,0.0,-3.5,3.7,0.004
+Saturday 08-17h,42,Simple: OLS on last week only,3.6,-15.6,19.4,0.341
+Saturday 08-17h,42,Strong: GBM (L1),0.5,-3.7,3.8,0.048
+Saturday 08-17h,42,Strong: GBM (log),-0.1,-1.3,1.2,-0.006
+Saturday 08-17h,42,Flexible linear: large one-hot Ridge,1.0,-5.8,7.3,0.092
+Saturday 08-17h,42,Exploratory: ours + last-year feature,-3.0,-5.5,-0.5,-0.26
+holiday days (long weekend + eve),39,Trivial: training mean,43.1,32.0,52.1,1.516
+holiday days (long weekend + eve),39,Persistence-type: last week same slot,38.1,21.7,50.4,1.23
+holiday days (long weekend + eve),39,Same holiday last time (else last week),14.6,-12.7,33.9,0.343
+holiday days (long weekend + eve),39,Seasonal mean: slot x weekday,38.2,26.0,48.1,1.237
+holiday days (long weekend + eve),39,Simple: OLS on last week only,37.3,24.4,47.5,1.188
+holiday days (long weekend + eve),39,Strong: GBM (L1),-9.2,-28.1,5.6,-0.169
+holiday days (long weekend + eve),39,Strong: GBM (log),7.7,-4.6,18.3,0.167
+holiday days (long weekend + eve),39,Flexible linear: large one-hot Ridge,5.6,-8.8,16.4,0.118
+holiday days (long weekend + eve),39,Exploratory: ours + last-year feature,-2.4,-5.6,0.7,-0.047
+"long weekend, all hours",31,Trivial: training mean,53.6,47.1,59.5,1.948
+"long weekend, all hours",31,Persistence-type: last week same slot,50.4,38.8,59.4,1.713
+"long weekend, all hours",31,Same holiday last time (else last week),31.5,9.4,47.9,0.776
+"long weekend, all hours",31,Seasonal mean: slot x weekday,50.2,42.7,56.7,1.697
+"long weekend, all hours",31,Simple: OLS on last week only,49.3,41.5,56.7,1.637
+"long weekend, all hours",31,Strong: GBM (L1),3.7,-11.0,13.7,0.065
+"long weekend, all hours",31,Strong: GBM (log),18.2,9.9,25.2,0.376
+"long weekend, all hours",31,Flexible linear: large one-hot Ridge,18.2,9.4,24.6,0.374
+"long weekend, all hours",31,Exploratory: ours + last-year feature,-2.5,-7.1,1.9,-0.04
+long weekend 08-18h,31,Trivial: training mean,44.9,29.5,54.7,2.411
+long weekend 08-18h,31,Persistence-type: last week same slot,52.8,40.5,61.5,3.315
+long weekend 08-18h,31,Same holiday last time (else last week),36.2,12.4,51.2,1.68
+long weekend 08-18h,31,Seasonal mean: slot x weekday,53.7,45.7,60.3,3.438
+long weekend 08-18h,31,Simple: OLS on last week only,46.3,34.7,54.0,2.557
+long weekend 08-18h,31,Strong: GBM (L1),4.4,-16.4,19.1,0.135
+long weekend 08-18h,31,Strong: GBM (log),10.3,-2.8,21.1,0.34
+long weekend 08-18h,31,Flexible linear: large one-hot Ridge,19.5,5.7,29.2,0.717
+long weekend 08-18h,31,Exploratory: ours + last-year feature,-0.7,-6.2,4.5,-0.021
+long weekend morning 07-12h,31,Trivial: training mean,35.9,14.5,50.6,0.712
+long weekend morning 07-12h,31,Persistence-type: last week same slot,52.6,37.0,63.9,1.409
+long weekend morning 07-12h,31,Same holiday last time (else last week),37.4,7.5,55.6,0.761
+long weekend morning 07-12h,31,Seasonal mean: slot x weekday,60.8,50.7,68.0,1.97
+long weekend morning 07-12h,31,Simple: OLS on last week only,39.8,22.0,51.3,0.84
+long weekend morning 07-12h,31,Strong: GBM (L1),-10.0,-27.2,4.2,-0.115
+long weekend morning 07-12h,31,Strong: GBM (log),18.5,0.7,33.6,0.288
+long weekend morning 07-12h,31,Flexible linear: large one-hot Ridge,6.5,-10.2,19.8,0.089
+long weekend morning 07-12h,31,Exploratory: ours + last-year feature,-6.2,-14.3,1.2,-0.074
+lw_first 10-18h,8,Trivial: training mean,58.2,48.5,64.6,8.705
+lw_first 10-18h,8,Persistence-type: last week same slot,51.5,36.6,59.4,6.642
+lw_first 10-18h,8,Same holiday last time (else last week),25.2,-14.5,46.3,2.11
+lw_first 10-18h,8,Seasonal mean: slot x weekday,46.0,26.8,54.9,5.328
+lw_first 10-18h,8,Simple: OLS on last week only,52.4,38.8,59.0,6.875
+lw_first 10-18h,8,Strong: GBM (L1),19.1,-20.9,36.1,1.472
+lw_first 10-18h,8,Strong: GBM (log),10.8,-14.8,25.7,0.76
+lw_first 10-18h,8,Flexible linear: large one-hot Ridge,29.7,3.4,42.1,2.643
+lw_first 10-18h,8,Exploratory: ours + last-year feature,-2.9,-12.7,6.8,-0.177
+eve 16-23h,8,Trivial: training mean,-50.7,-187.8,0.2,-2.634
+eve 16-23h,8,Persistence-type: last week same slot,-34.2,-126.4,6.7,-1.996
+eve 16-23h,8,Same holiday last time (else last week),-105.3,-227.3,-39.3,-4.017
+eve 16-23h,8,Seasonal mean: slot x weekday,-36.4,-134.0,4.6,-2.088
+eve 16-23h,8,Simple: OLS on last week only,-43.9,-172.4,3.2,-2.388
+eve 16-23h,8,Strong: GBM (L1),-70.8,-128.2,-16.8,-3.245
+eve 16-23h,8,Strong: GBM (log),-52.4,-101.7,-6.1,-2.693
+eve 16-23h,8,Flexible linear: large one-hot Ridge,-60.2,-128.4,-14.2,-2.944
+eve 16-23h,8,Exploratory: ours + last-year feature,-2.1,-4.9,-0.6,-0.161
+long weekend night 0-6h + 20-24h,31,Trivial: training mean,79.3,69.9,86.4,1.84
+long weekend night 0-6h + 20-24h,31,Persistence-type: last week same slot,44.9,10.8,68.3,0.392
+long weekend night 0-6h + 20-24h,31,Same holiday last time (else last week),18.5,-16.5,40.2,0.109
+long weekend night 0-6h + 20-24h,31,Seasonal mean: slot x weekday,31.2,12.5,48.0,0.218
+long weekend night 0-6h + 20-24h,31,Simple: OLS on last week only,67.5,54.4,78.1,0.999
+long weekend night 0-6h + 20-24h,31,Strong: GBM (L1),2.5,-9.0,15.1,0.012
+long weekend night 0-6h + 20-24h,31,Strong: GBM (log),51.5,31.6,66.2,0.511
+long weekend night 0-6h + 20-24h,31,Flexible linear: large one-hot Ridge,16.6,5.3,26.1,0.096
+long weekend night 0-6h + 20-24h,31,Exploratory: ours + last-year feature,-12.2,-18.4,-4.3,-0.052
+holiday days WITH last-year value,31,Trivial: training mean,44.4,33.1,53.6,1.598
+holiday days WITH last-year value,31,Persistence-type: last week same slot,38.1,22.1,50.0,1.231
+holiday days WITH last-year value,31,Same holiday last time (else last week),5.4,-22.3,26.3,0.114
+holiday days WITH last-year value,31,Seasonal mean: slot x weekday,40.9,28.8,51.0,1.385
+holiday days WITH last-year value,31,Simple: OLS on last week only,38.3,24.6,49.1,1.24
+holiday days WITH last-year value,31,Strong: GBM (L1),-9.0,-31.8,7.1,-0.164
+holiday days WITH last-year value,31,Strong: GBM (log),6.7,-8.4,19.9,0.143
+holiday days WITH last-year value,31,Flexible linear: large one-hot Ridge,7.3,-8.9,19.4,0.157
+holiday days WITH last-year value,31,Exploratory: ours + last-year feature,-3.3,-7.1,0.4,-0.063
+long weekend 08-18h WITH last-year value,25,Trivial: training mean,47.2,30.9,56.8,2.494
+long weekend 08-18h WITH last-year value,25,Persistence-type: last week same slot,52.2,39.4,60.7,3.047
+long weekend 08-18h WITH last-year value,25,Same holiday last time (else last week),26.7,-2.7,46.0,1.02
+long weekend 08-18h WITH last-year value,25,Seasonal mean: slot x weekday,56.2,48.6,62.1,3.58
+long weekend 08-18h WITH last-year value,25,Simple: OLS on last week only,47.0,33.0,55.8,2.481
+long weekend 08-18h WITH last-year value,25,Strong: GBM (L1),8.1,-10.9,21.2,0.247
+long weekend 08-18h WITH last-year value,25,Strong: GBM (log),14.1,1.7,24.7,0.459
+long weekend 08-18h WITH last-year value,25,Flexible linear: large one-hot Ridge,22.7,9.9,32.5,0.823
+long weekend 08-18h WITH last-year value,25,Exploratory: ours + last-year feature,-2.2,-8.9,3.8,-0.061

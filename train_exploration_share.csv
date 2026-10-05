@@ -1,0 +1,8 @@
+﻿daytype,days,share_gt40,mean
+weekday,483,0.037,31.05
+sat,86,0.253,36.669
+sun,93,0.01,30.346
+lw_first,10,0.229,36.824
+lw_mid,27,0.111,32.97
+lw_last,10,0.008,29.769
+eve_of_long,10,0.15,34.237

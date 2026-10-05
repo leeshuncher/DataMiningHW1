@@ -1,0 +1,10 @@
+﻿model,cv_mae_mean,cv_mae_sd,cv_rmse_mean,cv_rmse_sd,cv_hol_mae_mean,cv_hol_mae_sd,test_mae,test_rmse,test_r2,test_mae_holiday
+Trivial: training mean,3.002,0.481,4.804,0.835,3.762,0.177,2.819,5.208,-0.0,3.515
+Persistence-type: last week same slot,1.734,0.374,4.596,0.84,3.013,0.471,1.897,4.991,0.081,3.229
+Same holiday last time (else last week),1.745,0.322,4.658,0.775,3.212,1.477,1.802,4.768,0.161,2.342
+Seasonal mean: slot x weekday,1.859,0.44,3.681,0.539,2.941,0.79,1.743,4.089,0.383,3.236
+Simple: OLS on last week only,2.223,0.446,4.077,0.644,3.243,0.081,2.1,4.385,0.291,3.187
+Ours: compact linear (median regression),1.406,0.232,3.792,0.66,2.457,0.191,1.421,3.929,0.431,1.999
+Strong: GBM (L1),1.396,0.252,3.772,0.715,2.736,0.025,1.377,3.932,0.43,1.83
+Strong: GBM (log),1.548,0.309,3.784,0.759,3.789,0.654,1.497,3.779,0.473,2.166
+Flexible linear: large one-hot Ridge,1.407,0.157,3.631,0.498,2.459,0.408,1.439,3.888,0.442,2.117
