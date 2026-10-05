@@ -1,0 +1,16 @@
+﻿group,candidate,baseline,minutes_saved_per_window,ci95_low,ci95_high
+all,GBM log,Ridge eve x evening bin,-0.035,-0.116,0.034
+all,GBM L1,Ridge eve x evening bin,0.023,-0.05,0.099
+all,Ridge eve x evening bin,Ridge eve=own type (old),0.046,0.0,0.103
+ordinary (weekday+sat+sun),GBM log,Ridge eve x evening bin,-0.0,-0.056,0.053
+ordinary (weekday+sat+sun),GBM L1,Ridge eve x evening bin,0.028,-0.029,0.084
+ordinary (weekday+sat+sun),Ridge eve x evening bin,Ridge eve=own type (old),0.0,0.0,0.0
+holiday days (long weekend + eve),GBM log,Ridge eve x evening bin,-0.33,-0.867,0.152
+holiday days (long weekend + eve),GBM L1,Ridge eve x evening bin,0.032,-0.425,0.55
+holiday days (long weekend + eve),Ridge eve x evening bin,Ridge eve=own type (old),0.427,0.023,0.942
+long weekend days only,GBM log,Ridge eve x evening bin,0.212,-0.008,0.488
+long weekend days only,GBM L1,Ridge eve x evening bin,0.346,-0.169,0.958
+long weekend days only,Ridge eve x evening bin,Ridge eve=own type (old),-0.029,-0.218,0.125
+eve_of_long,GBM log,Ridge eve x evening bin,-2.431,-4.221,-0.863
+eve_of_long,GBM L1,Ridge eve x evening bin,-1.187,-1.751,-0.641
+eve_of_long,Ridge eve x evening bin,Ridge eve=own type (old),2.195,0.612,3.918

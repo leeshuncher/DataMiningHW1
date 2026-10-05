@@ -1,0 +1,25 @@
+﻿slice,days,candidate,baseline,improvement_%,ci95_low,ci95_high
+ordinary (weekday+sat+sun),323,Ridge calendar (log),last week (lag 7d),19.8,10.3,29.1
+ordinary (weekday+sat+sun),323,Ridge calendar (log),mean per hour x weekday,4.4,3.1,5.8
+ordinary (weekday+sat+sun),323,Ridge calendar+lags (log),last week (lag 7d),22.2,14.5,29.9
+ordinary (weekday+sat+sun),323,Ridge calendar+lags (log),mean per hour x weekday,7.3,4.6,9.9
+holiday days (long weekend + eve),39,Ridge calendar (log),last week (lag 7d),20.1,0.9,33.7
+holiday days (long weekend + eve),39,Ridge calendar (log),mean per hour x weekday,19.9,5.5,30.4
+holiday days (long weekend + eve),39,Ridge calendar+lags (log),last week (lag 7d),8.4,-9.3,20.5
+holiday days (long weekend + eve),39,Ridge calendar+lags (log),mean per hour x weekday,8.2,-4.6,18.5
+long weekend days only,31,Ridge calendar (log),last week (lag 7d),29.8,14.5,40.7
+long weekend days only,31,Ridge calendar (log),mean per hour x weekday,29.2,19.7,37.6
+long weekend days only,31,Ridge calendar+lags (log),last week (lag 7d),18.5,4.9,29.0
+long weekend days only,31,Ridge calendar+lags (log),mean per hour x weekday,17.8,8.2,27.3
+eve_of_long,8,Ridge calendar (log),last week (lag 7d),-29.5,-149.8,16.4
+eve_of_long,8,Ridge calendar (log),mean per hour x weekday,-25.8,-120.2,16.1
+eve_of_long,8,Ridge calendar+lags (log),last week (lag 7d),-43.2,-139.9,-1.7
+eve_of_long,8,Ridge calendar+lags (log),mean per hour x weekday,-39.1,-113.7,-3.7
+lw_first,8,Ridge calendar (log),last week (lag 7d),32.4,16.9,41.6
+lw_first,8,Ridge calendar (log),mean per hour x weekday,24.6,6.7,34.8
+lw_first,8,Ridge calendar+lags (log),last week (lag 7d),14.3,-1.2,23.2
+lw_first,8,Ridge calendar+lags (log),mean per hour x weekday,4.3,-10.2,13.1
+sat,42,Ridge calendar (log),last week (lag 7d),8.1,-12.6,25.1
+sat,42,Ridge calendar (log),mean per hour x weekday,1.6,-0.8,4.1
+sat,42,Ridge calendar+lags (log),last week (lag 7d),13.6,-3.8,27.0
+sat,42,Ridge calendar+lags (log),mean per hour x weekday,7.5,1.4,13.4
