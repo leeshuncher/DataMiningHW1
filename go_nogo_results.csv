@@ -1,0 +1,14 @@
+﻿slice,n,last week (lag 7d) MAE,mean per hour x weekday MAE,Ridge calendar MAE,Ridge calendar+lags MAE,Ridge calendar (log) MAE,Ridge calendar+lags (log) MAE,best Ridge vs last week %
+all,8715,1.9,1.66,1.57,1.58,1.53,1.53,19.5
+ordinary (weekday+sat+sun),7709,1.74,1.47,1.43,1.4,1.4,1.36,21.8
+holiday days (long weekend + eve),934,3.23,3.23,2.66,3.12,2.58,2.94,20.1
+long weekend days only,742,3.4,3.38,2.45,2.9,2.38,2.76,30.0
+weekday,5672,1.42,1.09,1.06,1.06,1.03,1.02,28.2
+sat,1005,4.7,4.42,4.41,4.18,4.35,4.1,12.8
+sun,1032,0.63,0.67,0.62,0.57,0.6,0.55,12.7
+eve_of_long,192,2.57,2.65,3.48,3.97,3.33,3.64,-29.6
+lw_first,191,6.42,5.73,4.12,5.52,4.31,5.45,35.8
+lw_mid,359,3.17,3.49,2.56,2.7,2.36,2.49,25.6
+lw_last,192,0.82,0.82,0.57,0.68,0.51,0.58,37.8
+single_holiday,48,1.46,1.38,1.15,1.25,1.18,1.24,21.2
+makeup_workday,24,2.02,3.32,1.94,1.89,1.65,1.77,18.3
