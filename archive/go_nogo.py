@@ -70,7 +70,7 @@ for g, m in groups.items():
     base = r["last week (lag 7d) MAE"]
     r["best Ridge vs last week %"] = round(100 * (1 - min(v for kk, v in r.items() if kk.startswith("Ridge")) / base), 1)
     rows.append(r)
-res = pd.DataFrame(rows); res.to_csv(f"go_nogo_results{SUF}.csv", index=False, encoding="utf-8-sig")
+res = pd.DataFrame(rows); res.to_csv(f"archive/results/go_nogo_results{SUF}.csv", index=False, encoding="utf-8-sig")
 pd.set_option("display.width", 250); pd.set_option("display.max_columns", 20)
 print(res.to_string(index=False)); print("alphas", alphas)
 rm = pd.DataFrame({k: [float(np.sqrt(((p - y) ** 2).mean()))] for k, p in P.items()}, index=["RMSE all"]); print(rm.round(2).to_string())
@@ -91,7 +91,7 @@ for g in ["ordinary (weekday+sat+sun)", "holiday days (long weekend + eve)", "lo
             brow.append({"slice": g, "days": len(days), "candidate": cand, "baseline": base,
                          "improvement_%": round(100 * (1 - ae[cand].sum() / ae[base].sum()), 1),
                          "ci95_low": round(float(np.percentile(imp, 2.5)), 1), "ci95_high": round(float(np.percentile(imp, 97.5)), 1)})
-bt = pd.DataFrame(brow); bt.to_csv(f"go_nogo_bootstrap{SUF}.csv", index=False, encoding="utf-8-sig")
+bt = pd.DataFrame(brow); bt.to_csv(f"archive/results/go_nogo_bootstrap{SUF}.csv", index=False, encoding="utf-8-sig")
 print(bt[bt.candidate == "Ridge calendar (log)"].to_string(index=False))
 
 
@@ -138,7 +138,7 @@ for g, types in dgroups.items():
                 boot.append({"group": g, "windows": r["windows"], "candidate": cand, "baseline": base,
                              "minutes_saved_per_window": round((sums[base].sum() - sums[cand].sum()) / cnts.sum(), 2),
                              "ci95_low": round(float(np.percentile(diffs, 2.5)), 2), "ci95_high": round(float(np.percentile(diffs, 97.5)), 2)})
-dec = pd.DataFrame(out); dec.to_csv(f"decision_results{SUF}.csv", index=False, encoding="utf-8-sig")
-bdec = pd.DataFrame(boot); bdec.to_csv(f"decision_bootstrap{SUF}.csv", index=False, encoding="utf-8-sig")
+dec = pd.DataFrame(out); dec.to_csv(f"archive/results/decision_results{SUF}.csv", index=False, encoding="utf-8-sig")
+bdec = pd.DataFrame(boot); bdec.to_csv(f"archive/results/decision_bootstrap{SUF}.csv", index=False, encoding="utf-8-sig")
 print("\nDecision regret = minutes lost vs the fastest slot in the 4-hour window (mean per window)")
 print(dec.to_string(index=False)); print(bdec.to_string(index=False))

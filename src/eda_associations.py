@@ -1,5 +1,5 @@
 """Exploratory association statistics on TRAINING YEARS ONLY (2023-2024): Pearson r, Spearman rho and mutual information between travel time and candidate features,
-plus redundancy among them. Outputs eda_associations.csv, eda_redundancy.csv. Usage: python eda_associations.py"""
+plus redundancy among them. Outputs eda_associations.csv, eda_redundancy.csv. Usage: python src/eda_associations.py"""
 import numpy as np, pandas as pd
 from sklearn.feature_selection import mutual_info_regression
 from protocol import data
@@ -14,6 +14,6 @@ for c in F.columns:
     x = F[c].values.astype(float); ok = ~np.isnan(x)
     rows.append({"feature": c, "pearson_r": np.corrcoef(x[ok], y[ok])[0, 1], "spearman_rho": pd.Series(x[ok]).corr(pd.Series(y[ok]), method="spearman"),
                  "mutual_info": mutual_info_regression(x[ok].reshape(-1, 1), y[ok], random_state=0, discrete_features=bool(len(np.unique(x[ok])) <= 12))[0], "n": int(ok.sum())})
-a = pd.DataFrame(rows).sort_values("mutual_info", ascending=False).round(3); a.to_csv("eda_associations.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 200); print(a.to_string(index=False))
-R = F[["Saturday", "long-weekend day", "daytime 08-18h", "same slot last week", "mean of same slot, last 4 weeks", "Saturday x daytime", "long weekend x daytime"]].corr().round(2); R.to_csv("eda_redundancy.csv", encoding="utf-8-sig"); print(R.to_string())
+a = pd.DataFrame(rows).sort_values("mutual_info", ascending=False).round(3); a.to_csv("results/eda_associations.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 200); print(a.to_string(index=False))
+R = F[["Saturday", "long-weekend day", "daytime 08-18h", "same slot last week", "mean of same slot, last 4 weeks", "Saturday x daytime", "long weekend x daytime"]].corr().round(2); R.to_csv("results/eda_redundancy.csv", encoding="utf-8-sig"); print(R.to_string())
 print("rows", len(d), "days", d.index.normalize().nunique())

@@ -1,7 +1,7 @@
 """Compact, fully reportable linear model: log or median regression on ~50-90 indicator terms (time-of-day blocks x day types, Friday terms, long-holiday term).
 Compared with the large one-hot Ridge using the SAME protocol (rolling-origin CV on the four 2024 quarters; test 2025 used once).
 Pre-specified rule: the compact model becomes the final model if its CV score (0.5*MAE ordinary + 0.5*MAE holiday) is within 5% of the best large model.
-Outputs compact_cv.csv, compact_test.csv. Usage: python compact_model.py"""
+Outputs compact_cv.csv, compact_test.csv. Usage: python src/compact_model.py"""
 import json, warnings; warnings.filterwarnings("ignore")
 import numpy as np, pandas as pd
 from sklearn.linear_model import Ridge
@@ -67,5 +67,5 @@ if __name__ == "__main__":
                     tr, va = fold_split(d, s, e); p, a, _ = fit_predict(tr, va, name, loss, w2023); ae = np.abs(p - va.minutes.values)
                     eo += list(ae[va.daytype.isin(ORD).values]); eh += list(ae[va.daytype.isin(HOL).values]); ea += list(ae); folds.append(ae.mean())
                 rows.append({"model": name, "loss": loss, "w2023": w2023, "mae_ordinary": np.mean(eo), "mae_holiday": np.mean(eh), "mae_all": np.mean(ea), "fold_mean": np.mean(folds), "fold_sd": np.std(folds, ddof=1), "score": 0.5 * np.mean(eo) + 0.5 * np.mean(eh)})
-    cvt = pd.DataFrame(rows).sort_values("score"); cvt.to_csv("compact_cv.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 200); print(cvt.round(3).to_string(index=False))
-    best_large = pd.read_csv("cv_grid.csv").score.min(); print("best large-model CV score:", round(best_large, 3), "| 5% rule threshold:", round(best_large * 1.05, 3))
+    cvt = pd.DataFrame(rows).sort_values("score"); cvt.to_csv("results/compact_cv.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 200); print(cvt.round(3).to_string(index=False))
+    best_large = pd.read_csv("results/cv_grid.csv").score.min(); print("best large-model CV score:", round(best_large, 3), "| 5% rule threshold:", round(best_large * 1.05, 3))

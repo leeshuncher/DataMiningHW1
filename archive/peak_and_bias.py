@@ -51,8 +51,8 @@ for g, m in groups.items():
     for k, p in P.items():
         r[k + " | MAE"] = round(float(np.abs(p[m] - y[m]).mean()), 2); b[k] = round(float((y[m] - p[m]).mean()), 2)
     rows.append(r); brows.append(b)
-res = pd.DataFrame(rows); res.to_csv("peak_results.csv", index=False, encoding="utf-8-sig")
-bias = pd.DataFrame(brows); bias.to_csv("bias_results.csv", index=False, encoding="utf-8-sig")
+res = pd.DataFrame(rows); res.to_csv("archive/results/peak_results.csv", index=False, encoding="utf-8-sig")
+bias = pd.DataFrame(brows); bias.to_csv("archive/results/bias_results.csv", index=False, encoding="utf-8-sig")
 pd.set_option("display.width", 300); pd.set_option("display.max_columns", 40); pd.set_option("display.max_colwidth", 60)
 mae_cols = ["slice", "n", "days", "mean actual"] + [k + " | MAE" for k in ["last week (lag 7d)", "mean per slot x weekday", "Ridge log", "Ridge log + smearing (by predicted level)", "Ridge L1", "GBM log", "GBM L1"]]
 print("\nMAE (minutes)"); print(res[mae_cols].to_string(index=False))
@@ -67,5 +67,5 @@ for g, m in groups.items():
             imp = [100 * (1 - ae[cand].loc[pk].sum() / ae[base].loc[pk].sum()) for pk in (rng.choice(days, len(days)) for _ in range(2000))]
             out.append({"slice": g, "days": len(days), "candidate": cand, "baseline": base, "improvement_%": round(100 * (1 - ae[cand].sum() / ae[base].sum()), 1),
                         "ci95_low": round(float(np.percentile(imp, 2.5)), 1), "ci95_high": round(float(np.percentile(imp, 97.5)), 1)})
-bt = pd.DataFrame(out); bt.to_csv("peak_bootstrap.csv", index=False, encoding="utf-8-sig")
+bt = pd.DataFrame(out); bt.to_csv("archive/results/peak_bootstrap.csv", index=False, encoding="utf-8-sig")
 print("\nDay-level bootstrap (Ridge log vs baselines)"); print(bt[bt.candidate == "Ridge log"].to_string(index=False))

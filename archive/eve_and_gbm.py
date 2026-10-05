@@ -35,7 +35,7 @@ def run(train_year, test_year, tag):
         r = {"slice": g, "n": int(m.sum()), "days": int(pd.Series(test.index.normalize()[m]).nunique())}
         for k, p in P.items(): r[k] = round(float(np.abs(p[m] - y[m]).mean()), 2)
         rows.append(r)
-    res = pd.DataFrame(rows); res.to_csv(f"eve_gbm_results{tag}.csv", index=False, encoding="utf-8-sig")
+    res = pd.DataFrame(rows); res.to_csv(f"archive/results/eve_gbm_results{tag}.csv", index=False, encoding="utf-8-sig")
     return train, test, P, info, groups, res
 
 train, test, P, info, groups, res = run(2024, 2025, "")
@@ -57,7 +57,7 @@ for date in sorted(set(day[test.daytype.values == "eve_of_long"])):
     for k in ["last week (lag 7d)", "mean per slot x weekday", "Ridge eve=own type (old)", "Ridge eve=ignored", "Ridge eve x evening bin", "Ridge eve x bin x Fri/other", "GBM log"]:
         r[k] = P[k][m].mean()
     det.append(r)
-det = pd.DataFrame(det).round(1); det.to_csv("eve_days_detail.csv", index=False, encoding="utf-8-sig"); print(det.to_string(index=False))
+det = pd.DataFrame(det).round(1); det.to_csv("archive/results/eve_days_detail.csv", index=False, encoding="utf-8-sig"); print(det.to_string(index=False))
 
 # decision metric and bootstrap
 DM = ["last week (lag 7d)", "mean per slot x weekday", "Ridge eve=own type (old)", "Ridge eve x evening bin", "Ridge eve x bin x Fri/other", "GBM L1", "GBM log"]
@@ -68,7 +68,7 @@ out = []
 for g, types in dg.items():
     sub = dr if types is None else dr[dr.daytype.isin(types)]
     out.append({"group": g, "n_windows": len(sub), "n_days": sub.date.nunique(), "leave at window start": round(sub["leave at window start"].mean(), 2), **{k: round(sub[k].mean(), 2) for k in DM}})
-dec = pd.DataFrame(out); dec.to_csv("eve_gbm_decision.csv", index=False, encoding="utf-8-sig"); print(dec.to_string(index=False))
+dec = pd.DataFrame(out); dec.to_csv("archive/results/eve_gbm_decision.csv", index=False, encoding="utf-8-sig"); print(dec.to_string(index=False))
 rng = np.random.default_rng(0); b = []
 for g, types in dg.items():
     sub = dr if types is None else dr[dr.daytype.isin(types)]; days = sub.date.unique()
@@ -77,4 +77,4 @@ for g, types in dg.items():
         diff = [(ps[base].loc[pk].sum() - ps[cand].loc[pk].sum()) / cnt.loc[pk].sum() for pk in (rng.choice(days, len(days)) for _ in range(2000))]
         b.append({"group": g, "candidate": cand, "baseline": base, "minutes_saved_per_window": round((ps[base].sum() - ps[cand].sum()) / cnt.sum(), 3),
                   "ci95_low": round(float(np.percentile(diff, 2.5)), 3), "ci95_high": round(float(np.percentile(diff, 97.5)), 3)})
-bt = pd.DataFrame(b); bt.to_csv("eve_gbm_bootstrap.csv", index=False, encoding="utf-8-sig"); print(bt.to_string(index=False))
+bt = pd.DataFrame(b); bt.to_csv("archive/results/eve_gbm_bootstrap.csv", index=False, encoding="utf-8-sig"); print(bt.to_string(index=False))

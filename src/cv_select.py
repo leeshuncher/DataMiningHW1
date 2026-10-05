@@ -1,7 +1,7 @@
 """Rolling-origin CV on the four quarters of 2024 to select the configuration. Grid (pre-specified, 48 configs):
 loss {log-Ridge, L1} x eve handling {ignored, shared evening-bin effect, bin x Friday/other} x last-year feature {no, yes} x 2023 ordinary weight {1, 0.1} x
 long-weekend effect {all hours, daytime only}. Score = 0.5*MAE(ordinary days) + 0.5*MAE(holiday days), pooled over the four validation quarters.
-Outputs cv_grid.csv (all configs) and cv_selected.json. Usage: python cv_select.py"""
+Outputs cv_grid.csv (all configs) and cv_selected.json. Usage: python src/cv_select.py"""
 import itertools, json, sys, warnings; warnings.filterwarnings("ignore")
 import numpy as np, pandas as pd
 from concurrent.futures import ProcessPoolExecutor
@@ -22,9 +22,9 @@ def run(cfg):
 
 if __name__ == "__main__":
     with ProcessPoolExecutor(4) as ex: res = list(ex.map(run, GRID))
-    g = pd.DataFrame(res).sort_values("score"); g.to_csv("cv_grid.csv", index=False, encoding="utf-8-sig")
+    g = pd.DataFrame(res).sort_values("score"); g.to_csv("results/cv_grid.csv", index=False, encoding="utf-8-sig")
     pd.set_option("display.width", 250); pd.set_option("display.max_columns", 20); print(g.head(15).round(3).to_string(index=False))
     best = g.iloc[0]; sel = {k: (best[k].item() if hasattr(best[k], "item") else best[k]) for k in ["loss", "eve", "ly", "w", "night"]}
-    json.dump(sel, open("cv_selected.json", "w")); print("selected:", sel)
+    json.dump(sel, open("results/cv_selected.json", "w")); print("selected:", sel)
     # marginal effects of each choice (mean score over the configs sharing that choice)
     for col in ["loss", "eve", "ly", "w", "night"]: print(col, g.groupby(col).score.mean().round(3).to_dict())

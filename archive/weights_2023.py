@@ -43,7 +43,7 @@ groups = {"all slots": np.ones(len(test), bool), "ordinary (weekday+sat+sun)": n
           "lw_first 10-18h": (dt == "lw_first") & (hod >= 10) & (hod < 18), "eve 16-23h": eve & (hod >= 16), "Saturday 08-17h": (dt == "sat") & (hod >= 8) & (hod < 17)}
 res = pd.DataFrame([{"slice": g, "n": int(m.sum()), "days": int(pd.Series(test.index.normalize()[m]).nunique()),
                      **{k: round(float(np.abs(p[m] - y[m]).mean()), 2) for k, p in P.items()}} for g, m in groups.items()])
-res.to_csv("weights_2023_results.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 320); pd.set_option("display.max_columns", 30); print(res.to_string(index=False))
+res.to_csv("archive/results/weights_2023_results.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 320); pd.set_option("display.max_columns", 30); print(res.to_string(index=False))
 rng = np.random.default_rng(0); day_id = test.index.normalize().values; out = []
 W = f"Ridge log, 2023 ordinary x{best_w}"; WL = f"Ridge log +ly, 2023 ordinary x{best_w}"
 for g, m in groups.items():
@@ -53,7 +53,7 @@ for g, m in groups.items():
         imp = [100 * (1 - ae[cand].loc[pk].sum() / ae[base].loc[pk].sum()) for pk in (rng.choice(days, len(days)) for _ in range(2000))]
         out.append({"slice": g, "days": len(days), "candidate": cand, "baseline": base, "improvement_%": round(100 * (1 - ae[cand].sum() / ae[base].sum()), 1),
                     "ci95_low": round(float(np.percentile(imp, 2.5)), 1), "ci95_high": round(float(np.percentile(imp, 97.5)), 1)})
-bt = pd.DataFrame(out); bt.to_csv("weights_2023_bootstrap.csv", index=False, encoding="utf-8-sig")
+bt = pd.DataFrame(out); bt.to_csv("archive/results/weights_2023_bootstrap.csv", index=False, encoding="utf-8-sig")
 print(bt[bt.slice.isin(["all slots", "ordinary (weekday+sat+sun)", "long weekend, all hours", "long weekend 08-18h", "lw_first 10-18h", "eve 16-23h", "holiday days (long weekend + eve)"])].to_string(index=False))
 
 # ---- decision metric for the weighted models ----
@@ -73,7 +73,7 @@ for g, types in dg.items():
             dif = [(ps[base].loc[pk].sum() - ps[cand].loc[pk].sum()) / cnt.loc[pk].sum() for pk in (rng.choice(days, len(days)) for _ in range(2000))]
             brow.append({"group": g, "candidate": cand, "baseline": base, "minutes_saved_per_window": round((ps[base].sum() - ps[cand].sum()) / cnt.sum(), 2),
                          "ci95_low": round(float(np.percentile(dif, 2.5)), 2), "ci95_high": round(float(np.percentile(dif, 97.5)), 2)})
-dd = pd.DataFrame(rows); dd.to_csv("weights_2023_decision.csv", index=False, encoding="utf-8-sig")
-db = pd.DataFrame(brow); db.to_csv("weights_2023_decision_bootstrap.csv", index=False, encoding="utf-8-sig")
+dd = pd.DataFrame(rows); dd.to_csv("archive/results/weights_2023_decision.csv", index=False, encoding="utf-8-sig")
+db = pd.DataFrame(brow); db.to_csv("archive/results/weights_2023_decision_bootstrap.csv", index=False, encoding="utf-8-sig")
 print("\nDecision: minutes lost per 4-hour window vs the fastest slot"); print(dd.to_string(index=False))
 print(db[db.candidate == W].to_string(index=False))

@@ -2,7 +2,7 @@
 Columns: date, is_holiday (incl. weekends), description, is_makeup_workday, block_len, block_pos, daytype.
 A block = run of consecutive non-working days. Long weekend = block of >= 3 days. daytype is one of
 weekday, sat, sun, eve_of_long (workday just before a long block), lw_first, lw_mid, lw_last, single_holiday (1-2 day block that is
-not a plain weekend), makeup_workday. Usage: python fetch_calendar.py"""
+not a plain weekend), makeup_workday. Usage: python src/fetch_calendar.py"""
 import json, subprocess
 import pandas as pd
 

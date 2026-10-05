@@ -16,5 +16,5 @@ for name in ["compact8", "compact8h"]:
                 eo += list(ae[va.daytype.isin(ORD).values]); eh += list(ae[va.daytype.isin(HOL).values])
                 dr = decision_regret(va, {"m": p}, 60); regs += list(dr.m); regs_h += list(dr[dr.daytype.isin(HOL)].m)
             rows.append({"model": name, "loss": loss, "w2023": w, "mae_ordinary": np.mean(eo), "mae_holiday": np.mean(eh), "score": 0.5 * np.mean(eo) + 0.5 * np.mean(eh), "regret_all": np.mean(regs), "regret_holiday": np.mean(regs_h) if regs_h else np.nan, "n_windows": len(regs)})
-r = pd.DataFrame(rows).sort_values("regret_all"); r.to_csv("compact_cv2.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 200); print(r.round(3).to_string(index=False))
-print("5% rule threshold on score:", round(pd.read_csv("cv_grid.csv").score.min() * 1.05, 3))
+r = pd.DataFrame(rows).sort_values("regret_all"); r.to_csv("results/compact_cv2.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 200); print(r.round(3).to_string(index=False))
+print("5% rule threshold on score:", round(pd.read_csv("results/cv_grid.csv").score.min() * 1.05, 3))

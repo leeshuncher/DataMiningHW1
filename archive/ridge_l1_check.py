@@ -39,4 +39,4 @@ groups = {"all": np.ones(len(test), bool), "ordinary (weekday+sat+sun)": np.isin
           "holiday days (long weekend + eve)": np.isin(dt, ["lw_first", "lw_mid", "lw_last", "eve_of_long"]),
           "long weekend days only": np.isin(dt, ["lw_first", "lw_mid", "lw_last"]), "lw_first": dt == "lw_first", "sat": dt == "sat"}
 res = pd.DataFrame([{"slice": g, "n": int(m.sum()), **{k: round(float(np.abs(p[m] - y[m]).mean()), 2) for k, p in P.items()}} for g, m in groups.items()])
-res.to_csv("ridge_l1_check.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 250); print(res.to_string(index=False))
+res.to_csv("archive/results/ridge_l1_check.csv", index=False, encoding="utf-8-sig"); pd.set_option("display.width", 250); print(res.to_string(index=False))

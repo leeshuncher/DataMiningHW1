@@ -55,8 +55,8 @@ for g, m in groups.items():
     b = {"slice": g, "n": int(m.sum())}
     for k, p in P.items(): r[k] = round(float(np.abs(p[m] - y[m]).mean()), 2); b[k] = round(float((y[m] - p[m]).mean()), 2)
     rows.append(r); brows.append(b)
-res = pd.DataFrame(rows); res.to_csv("rerun2023_results.csv", index=False, encoding="utf-8-sig")
-pd.DataFrame(brows).to_csv("rerun2023_bias.csv", index=False, encoding="utf-8-sig")
+res = pd.DataFrame(rows); res.to_csv("archive/results/rerun2023_results.csv", index=False, encoding="utf-8-sig")
+pd.DataFrame(brows).to_csv("archive/results/rerun2023_bias.csv", index=False, encoding="utf-8-sig")
 pd.set_option("display.width", 320); pd.set_option("display.max_columns", 60)
 cmp = ["slice", "n", "days", "mean actual", "last week (lag 7d)", "mean per slot x weekday (2023+24)", "same holiday last time, else last week",
        "T24 Ridge log", "T2324 Ridge log", "T2324 Ridge log +ly", "T2324 Ridge L1", "T2324 GBM log", "T2324 GBM L1"]
@@ -78,7 +78,7 @@ for g, m in groups.items():
         imp = [100 * (1 - ae[cand].loc[pk].sum() / ae[base].loc[pk].sum()) for pk in (rng.choice(days, len(days)) for _ in range(2000))]
         out.append({"slice": g, "days": len(days), "candidate": cand, "baseline": base, "improvement_%": round(100 * (1 - ae[cand].sum() / ae[base].sum()), 1),
                     "ci95_low": round(float(np.percentile(imp, 2.5)), 1), "ci95_high": round(float(np.percentile(imp, 97.5)), 1)})
-bt = pd.DataFrame(out); bt.to_csv("rerun2023_bootstrap.csv", index=False, encoding="utf-8-sig")
+bt = pd.DataFrame(out); bt.to_csv("archive/results/rerun2023_bootstrap.csv", index=False, encoding="utf-8-sig")
 print("\nBootstrap (whole days resampled)")
 print(bt[bt.slice.isin(["long weekend, all hours", "long weekend 08-18h", "lw_first 10-18h", "eve 16-23h", "ordinary (weekday+sat+sun)", "holiday days (long weekend + eve)", "all slots"])].to_string(index=False))
 
@@ -91,7 +91,7 @@ dd = []
 for g, types in dg.items():
     sub = dr if types is None else dr[dr.daytype.isin(types)]
     dd.append({"group": g, "n_windows": len(sub), "n_days": sub.date.nunique(), "leave at window start": round(sub["leave at window start"].mean(), 2), **{k: round(sub[k].mean(), 2) for k in DM}})
-dd = pd.DataFrame(dd); dd.to_csv("rerun2023_decision.csv", index=False, encoding="utf-8-sig")
+dd = pd.DataFrame(dd); dd.to_csv("archive/results/rerun2023_decision.csv", index=False, encoding="utf-8-sig")
 print("\nDecision: minutes lost per 4-hour window vs the fastest slot"); print(dd.to_string(index=False))
 # per-eve-day detail
 det = []
@@ -100,4 +100,4 @@ for date in sorted(set(test.index.normalize()[eve])):
     det.append({"date": date.date(), "weekday": "一二三四五六日"[date.dayofweek], "actual 16-23h": y[m].mean(), "T24 Ridge log": P["T24 Ridge log"][m].mean(),
                 "T2324 Ridge log": P["T2324 Ridge log"][m].mean(), "T2324 Ridge log +ly": P["T2324 Ridge log +ly"][m].mean(), "T2324 eve ignored": P["T2324 Ridge log [eve ignored]"][m].mean(),
                 "same holiday last time": np.nanmean(np.where(test.ly.notna().values[m], test.ly.values[m], np.nan)) if test.ly.notna().values[m].any() else np.nan})
-pd.DataFrame(det).round(1).to_csv("rerun2023_eve_days.csv", index=False, encoding="utf-8-sig"); print("\n", pd.DataFrame(det).round(1).to_string(index=False))
+pd.DataFrame(det).round(1).to_csv("archive/results/rerun2023_eve_days.csv", index=False, encoding="utf-8-sig"); print("\n", pd.DataFrame(det).round(1).to_string(index=False))
