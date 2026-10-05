@@ -46,7 +46,7 @@ Table~\ref{tab:rel} compares four verified sources. \citet{rice2004} and \citet{
 \begin{table*}[t]\tb\centering\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}L{2.55cm}L{2.45cm}L{2.25cm}L{2.8cm}L{2.15cm}L{2.75cm}@{}}
 \toprule Work & Data & Target & Features & Model & Reported error\\\midrule
-\citet{rice2004} & freeway loop detectors & travel time, short-term & current travel time, time of day & time-varying linear & n/v\\
+\citet{rice2004} & I-10 LA, 48 mi, 34 weekdays & travel time, 0--60 min ahead & current travel time, time of day & time-varying linear & RMSE $<$10 min\\
 \citet{fan2018} & Taiwan ETC & travel time & historical + real-time & random forest & n/v\\
 \citet{bansal2020} & Freeway 1, 36.1 km & travel time & 43 predictors $\to$ 6 & BBO-SVR & MAPE 6.44\%\\
 \citet{ashouri2023} & Taiwan holidays 2019--21 & hourly vehicle counts & Fourier terms, hierarchy & reconciled OLS & RMSE per level, OLS $\approx$ ARIMA\\
