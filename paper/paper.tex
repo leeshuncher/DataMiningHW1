@@ -10,6 +10,10 @@
 \usetikzlibrary{arrows.meta,positioning}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
+\usepgfplotslibrary{fillbetween}
+\definecolor{cBlue}{HTML}{2A78D6}\definecolor{cOrange}{HTML}{EB6834}\definecolor{cAqua}{HTML}{1BAF7A}
+\definecolor{cViolet}{HTML}{4A3AA7}\definecolor{cGray}{HTML}{8A8984}\definecolor{cInk}{HTML}{0B0B0B}\definecolor{cBand}{HTML}{F1F0EC}
+\pgfplotsset{paper/.style={tick label style={font=\tiny},label style={font=\scriptsize},title style={font=\scriptsize\bfseries,yshift=-1mm},axis line style={cGray},tick style={cGray},major grid style={cGray!25}}}
 \usepackage{enumitem}
 \setlist{nosep,leftmargin=*}
 \renewcommand{\arraystretch}{0.95}
@@ -63,19 +67,41 @@ Test 2025 & 365 & 8,715 & 31.7 & 5.2 & 5.7\%\\\bottomrule
 \end{table}
 
 \section{Exploratory Analysis (training years only)}
-\begin{figure}[t]\centering
+\begin{figure*}[t]\centering
+\pgfplotstableread[col sep=semicolon]{assoc.csv}\assoc
 \begin{tikzpicture}
-\begin{axis}[width=\columnwidth,height=4.3cm,xlabel={Departure hour},ylabel={Minutes},tick label style={font=\tiny},label style={font=\scriptsize},legend style={font=\tiny,draw=none,at={(0.02,0.98)},anchor=north west,fill=none},legend columns=2,xmin=0,xmax=23,ymin=26,ymax=62]
-\addplot[blue,thick] table[x=hour,y=weekday,col sep=comma]{hourly.csv};\addlegendentry{Weekday}
-\addplot[red,thick] table[x=hour,y=sat,col sep=comma]{hourly.csv};\addlegendentry{Saturday}
-\addplot[orange!80!black,thick] table[x=hour,y=lw_first,col sep=comma]{hourly.csv};\addlegendentry{LW first day}
-\addplot[green!50!black,thick] table[x=hour,y=eve_of_long,col sep=comma]{hourly.csv};\addlegendentry{Eve}
-\addplot[violet,thick] table[x=hour,y=lw_last,col sep=comma]{hourly.csv};\addlegendentry{LW last day}
-\addplot[gray,dashed] table[x=hour,y=sun,col sep=comma]{hourly.csv};\addlegendentry{Sunday}
+\begin{axis}[paper,name=h,width=0.53\textwidth,height=5.2cm,title={(a) Mean travel time by departure hour and day type},xlabel={Departure hour (h)},ylabel={Travel time (min)},xmin=0,xmax=23,ymin=26,ymax=54,xtick={0,3,...,21},ytick={30,35,...,50},ymajorgrids,clip=false]
+\addplot[draw=none,fill=cBand,forget plot] coordinates{(0,40)(23,40)(23,54)(0,54)}\closedcycle;
+\draw[cGray,densely dashed] (axis cs:0,30)--(axis cs:23,30);\node[font=\tiny,text=cGray,anchor=north east] at (axis cs:23,29.6){free flow $\approx$30 min};
+\node[font=\tiny,text=cGray,anchor=north west] at (axis cs:0.2,53.6){$>$40 min: congested};
+\addplot[cGray,thick] table[x=hour,y=weekday,col sep=comma]{hourly.csv};\addlegendentry{Weekday}
+\addplot[cBlue,very thick] table[x=hour,y=sat,col sep=comma]{hourly.csv};\addlegendentry{Saturday}
+\addplot[cOrange,very thick] table[x=hour,y=lw_first,col sep=comma]{hourly.csv};\addlegendentry{LW first day}
+\addplot[cViolet,thick,densely dashdotted] table[x=hour,y=eve_of_long,col sep=comma]{hourly.csv};\addlegendentry{Eve of LW}
+\addplot[cAqua,thick,densely dotted] table[x=hour,y=lw_last,col sep=comma]{hourly.csv};\addlegendentry{LW last day}
+\node[circle,fill=cBlue,inner sep=1.1pt] at (axis cs:13,48.5){};\node[font=\tiny,anchor=south east,text=cInk] at (axis cs:12.8,48.6){Sat 13h: 48.5};
+\node[circle,fill=cOrange,inner sep=1.1pt] at (axis cs:15,49.0){};\node[font=\tiny,anchor=south west,text=cInk] at (axis cs:15.2,49.1){First 15h: 49.0};
+\node[circle,fill=cViolet,inner sep=1.1pt] at (axis cs:23,46.4){};\node[font=\tiny,anchor=east,text=cInk] at (axis cs:22.6,46.6){Eve 23h: 46.4};
+\node[circle,fill=cGray,inner sep=1.1pt] at (axis cs:11,38.1){};
+\legend{}
+\end{axis}
+\begin{axis}[paper,at={(h.east)},anchor=west,xshift=2.15cm,width=0.40\textwidth,height=5.2cm,title={(b) Association with travel time (training years)},xbar=0pt,bar width=2.2pt,xmin=0,xmax=0.95,xlabel={Association (unitless)},
+ ytick=data,yticklabels from table={\assoc}{label},y tick label style={font=\tiny},ymin=-0.7,ymax=15.7,xmajorgrids,legend style={font=\tiny,draw=none,fill=white,at={(0.98,0.60)},anchor=east},legend cell align=left,area legend,enlarge y limits=false]
+\fill[cBand] (axis cs:0,13.5) rectangle (axis cs:0.95,15.7);
+\addplot[fill=cBlue,draw=none] table[x=spear,y=y]{\assoc};\addlegendentry{$|$Spearman $\rho|$}
+\addplot[fill=cOrange,draw=none] table[x=mi,y=y]{\assoc};\addlegendentry{Mutual information}
+\node[font=\tiny,text=cInk,anchor=west,align=left] at (axis cs:0.22,2.5){holiday flags: MI $\le$0.02,\\yet worth $+$15--21 min\\in the model (Fig.~\ref{fig:coef})};
 \end{axis}
 \end{tikzpicture}
-\caption{Mean hourly travel time by day type, 2023--2024 (LW: long weekend).}\label{fig:hourly}
-\end{figure}
+\begin{tikzpicture}[font=\tiny]
+\draw[cGray,thick] (0,0)--++(0.5,0) node[right,text=cInk]{Weekday};
+\draw[cBlue,very thick] (2.3,0)--++(0.5,0) node[right,text=cInk]{Saturday};
+\draw[cOrange,very thick] (4.6,0)--++(0.5,0) node[right,text=cInk]{LW first day};
+\draw[cViolet,thick,densely dashdotted] (6.9,0)--++(0.5,0) node[right,text=cInk]{Eve of LW};
+\draw[cAqua,thick,densely dotted] (9.2,0)--++(0.5,0) node[right,text=cInk]{LW last day};
+\end{tikzpicture}
+\caption{Exploratory analysis on 2023--2024 only (LW: long weekend; eve: working day before it). (a) The day type changes \emph{when} the day is slow, not only how slow: weekdays peak at 11h, Saturdays at 13h, first days at 15h, eves late at night, while the last day stays near weekdays (H1--H3). (b) Shaded rows are lag features, strongest but not adopted (\S5). Holiday indicators have almost no marginal association because they cover few rows, so a correlation ranking would discard them; this motivates the day-type$\times$block design and Set B in \S\ref{sec:abl}.}\label{fig:hourly}
+\end{figure*}
 The shape of the day depends on the day type (Fig.~\ref{fig:hourly}): weekdays peak at 11:00 (38.1 min), Saturdays at 13:00 (48.5), the first day of a long weekend at 15:00 (49.0), and the eve rises late (46.4 at 23:00). The share of hours above 40 min is 3.7\% on weekdays, 25.3\% on Saturdays, 22.9\% on first days. Saturdays drift: 30.3\% in 2023 but 21.4\% in 2024.
 
 \noindent\textbf{Association.} Last week and the 4-week mean have the highest Pearson/Spearman/MI with the target ($r$ 0.60--0.67, MI 0.74--0.80); hour of day has the highest MI among calendar variables (0.73). Holiday indicators look weak ($|r|\le0.14$) only because they cover few rows (10 first days and 10 eves in 703 days) yet their conditional effect is large; a correlation ranking would discard exactly the features that matter on long weekends (tested in \S\ref{sec:abl}). Redundancy: last week vs.\ 4-week mean $r{=}0.81$, Saturday vs.\ Saturday$\times$daytime 0.62, so we check VIFs in the final model (max 3.1).
@@ -83,17 +109,32 @@ The shape of the day depends on the day type (Fig.~\ref{fig:hourly}): weekdays p
 \noindent\textbf{Hypotheses.} H1: the first morning of a long weekend is much slower than an ordinary Saturday morning. H2: the last day barely affects southbound traffic. H3: the evening before a holiday is slower than an ordinary evening of the same weekday. H4: the first-day afternoon peak is lower for holidays of $\ge4$ days.
 
 \section{Method}
-\begin{figure}[t]\centering
-\begin{tikzpicture}[node distance=2.5mm,every node/.style={draw,rounded corners,font=\tiny,align=center,minimum height=7mm,inner sep=2pt},>=Stealth]
-\node(a){M04A\\archives};
-\node(b)[right=of a]{Segment sum,\\hourly mean};
-\node(c)[right=of b]{Calendar\\features};
-\node(d)[right=of c]{Median\\linear fit};
-\node(e)[right=of d]{Forecast,\\best hour};
-\draw[->](a)--(b);\draw[->](b)--(c);\draw[->](c)--(d);\draw[->](d)--(e);
+\begin{figure*}[t]\centering
+\begin{tikzpicture}[>=Stealth,font=\tiny,
+ st/.style={draw=cGray,rounded corners=2pt,fill=white,text width=2.55cm,minimum height=1.8cm,align=left,inner sep=3pt,anchor=north west},
+ hd/.style={fill=cBlue!12,draw=cGray,rounded corners=2pt,text width=2.55cm,align=center,inner sep=2pt,font=\scriptsize\bfseries,text height=1.6ex,text depth=0.4ex,anchor=south west}]
+\foreach \x/\t/\b [count=\i] in {
+ 0/{1 Raw data}/{\textbf{In:} TDCS M04A archives, 5-min median segment times, 2023--2025\\[1pt]\textbf{Out:} F5 SB small-car (type 31) rows, 4 segments},
+ 3.15/{2 Preprocessing}/{\textbf{In:} valid rows (time$>$0, count$\ge$1)\\[1pt]\textbf{Out:} trip time = sum of 4 segments; hourly mean if $\ge$6/12 slots; 26,304 rows, no imputation},
+ 6.30/{3 Calendar features}/{\textbf{In:} TaiwanCalendar holidays + make-up days\\[1pt]\textbf{Out:} 109 0/1 indicators (hour; day type $\times$ 2-h block; Friday; $\ge$4-d), known 18:00 day $-1$},
+ 9.45/{4 Median linear model}/{\textbf{In:} indicators, 2023 ordinary days weight 0.1\\[1pt]\textbf{Out:} $\beta$ in minutes; IRLS ridge, $\alpha{=}0.01$ by TimeSeriesSplit},
+ 12.60/{5 Forecast \& decision}/{\textbf{In:} tomorrow's calendar row\\[1pt]\textbf{Out:} 24 hourly minutes; best hour in each 4-h window; MAE, RMSE, regret}}{
+ \node[hd] (h\i) at (\x,0) {\t};
+ \node[st] (b\i) at (\x,0) {\b};}
+\foreach \i/\j in {1/2,2/3,3/4,4/5}{\draw[->,thick,cGray] (b\i.east)--(b\j.west);}
+% timeline
+\begin{scope}[yshift=-2.15cm]
+\def\u{5.12}
+\fill[cBlue!30] (0,0) rectangle (\u,0.32); \node at (0.5*\u,0.16){Train 2023 (ordinary days $\times$0.1)};
+\fill[cBlue!55] (\u,0) rectangle (2*\u,0.32);
+\foreach \q in {1,...,4}{\draw[white,thick] ({\u+\q*\u/4},0)--({\u+\q*\u/4},0.32); \node[text=white] at ({\u+(\q-0.5)*\u/4},0.16){CV Q\q};}
+\fill[cOrange!70] (2*\u,0) rectangle (3*\u,0.32); \node[text=white,font=\tiny\bfseries] at (2.5*\u,0.16){Test 2025 (final report)};
+\node[anchor=north,text=cInk] at (1.5*\u,-0.02){2024: rolling-origin CV, each quarter trained on all earlier data};
+\node[anchor=north,text=cInk] at (2.5*\u,-0.02){refit on 2023--2024, scored once};
+\end{scope}
 \end{tikzpicture}
-\caption{Pipeline. Every learned quantity is fitted on 2023--2024 only.}\label{fig:pipe}
-\end{figure}
+\caption{Pipeline (top: each stage's input and output) and data split (bottom). Every learned quantity, including the selection of features, penalty and loss, uses 2023--2024 only.}\label{fig:pipe}
+\end{figure*}
 \noindent\textbf{Features.} All features are 0/1 indicators of facts known the evening before, so every coefficient is minutes of delay (Table~\ref{tab:feat}); after dropping empty columns the model has 109 terms.
 \begin{table}[t]\tb\centering
 \begin{tabular}{@{}p{1.7cm}p{3.7cm}p{0.7cm}@{}}
@@ -136,8 +177,24 @@ Flexible linear: large one-hot ridge & 1.41$\pm$0.16 & 3.63$\pm$0.50 & 2.46$\pm$
 \end{table*}
 \textbf{Main comparison.} Table~\ref{tab:main}: on the test year our model is 25\% (0.48 min, 95\% CI 16--34\%) below last week's same hour, 50\% below the training mean, and better in MAE than every simple baseline (trivial, persistence, seasonal mean, single-feature OLS), both in CV and on 2025. It has the best cross-validated holiday MAE of all methods (2.46 vs.\ 2.74 for GBM). Against the strongest baseline, GBM (L1), the CV difference is 0.01 min (paired $t$-test $p{=}0.72$, $n{=}4$); on the test year the two differ by 0.04 min (CI 0.01--0.08), 4\% of the 1.0 min threshold, so in practice they are tied, and ours exposes every effect as a readable coefficient. The large one-hot ridge with over 1,000 terms is within 1.2\% in MAE (CI $-1.8$ to 4.0\%), so a design ten times smaller gives up no accuracy.
 
-\noindent\textbf{Where the gain comes from.} The gain is largest exactly where the user's decision is hardest: on long-weekend days MAE falls from 3.40 to 1.69 min (50\%, CI 39--59\%), and on ordinary days from 1.74 to 1.35 (22\%, CI 12--32\%).
+\noindent\textbf{Where the gain comes from.} The gain is largest exactly where the user's decision is hardest: on long-weekend days MAE falls from 3.40 to 1.69 min (50\%, CI 39--59\%), and on ordinary days from 1.74 to 1.35 (22\%, CI 12--32\%). Figure~\ref{fig:case} shows a typical long weekend (Dragon Boat 2025, ranked 4th of 8 by our error). Last week's value misses the holiday entirely; our model places the first-day afternoon peak at the right hours and comes closest to its height (52.7 vs.\ 74.7 min actual; GBM 42.0, last week 31.3).
 
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[paper,width=\columnwidth,height=5.0cm,xmin=0,xmax=96,ymin=25,ymax=86,xlabel={Departure time, 29 May -- 1 Jun 2025 (h)},ylabel={Travel time (min)},
+ xtick={0,12,...,96},xticklabels={0,12,0,12,0,12,0,12,0},ytick={30,40,...,80},ymajorgrids,legend style={font=\tiny,draw=none,fill=none,at={(0.5,-0.32)},anchor=north},legend columns=2,legend cell align=left,clip=false]
+\fill[cBand] (axis cs:24,25) rectangle (axis cs:48,86);\fill[cBand] (axis cs:72,25) rectangle (axis cs:96,86);
+\node[font=\tiny\bfseries,text=cGray,anchor=north] at (axis cs:12,85.5){Eve (Thu)};\node[font=\tiny\bfseries,text=cGray,anchor=north] at (axis cs:36,85.5){First (Fri)};\node[font=\tiny\bfseries,text=cGray,anchor=north] at (axis cs:60,85.5){Middle (Sat)};\node[font=\tiny\bfseries,text=cGray,anchor=north] at (axis cs:84,85.5){Last (Sun)};
+\addplot[cInk,very thick] table[x=t,y=actual,col sep=comma]{case.csv};\addlegendentry{Actual}
+\addplot[cBlue,thick] table[x=t,y=ours,col sep=comma]{case.csv};\addlegendentry{Ours (MAE 2.64)}
+\addplot[cGray,thick,densely dashed] table[x=t,y=gbm,col sep=comma]{case.csv};\addlegendentry{GBM (2.46)}
+\addplot[cOrange,thick,densely dotted] table[x=t,y=lastwk,col sep=comma]{case.csv};\addlegendentry{Last week (3.54)}
+\node[font=\tiny,anchor=west,text=cInk] at (axis cs:41.5,72){74.7 actual};
+\node[font=\tiny,anchor=west,text=cBlue] at (axis cs:41.5,54){52.7 ours};
+\end{axis}
+\end{tikzpicture}
+\caption{Hourly forecasts over the 2025 Dragon Boat long weekend and its eve (MAE over the 96 hours in the legend). The model predicts the first-day 12--18h jam from the calendar alone; last week's same hour cannot.}\label{fig:case}
+\end{figure}
 \begin{table}[t]\tb\centering
 \begin{tabular}{@{}lrrrr@{}}
 \toprule Group & Start & Last wk & Ours & GBM\\\midrule
@@ -170,15 +227,30 @@ C $-$ Saturday terms & 1.51$\pm$0.35 & 1.56 & 1.51 & 2.98 & 6.27 & 7.83\\\bottom
 \section{Analysis}
 \begin{figure*}[t]\centering
 \begin{tikzpicture}
-\begin{axis}[width=\textwidth,height=4.6cm,xmin=0,xmax=110,ymin=-17,ymax=32,ylabel={$\beta$ (minutes)},label style={font=\scriptsize},tick label style={font=\tiny},
- xtick={12,25.5,32,41,50,59,68,77,86,95,104,109},xticklabels={Hour,Fri,Sat,Sun,LW first,LW mid,LW last,Eve Fri,Eve oth.,Single,Make-up,$\ge$4d},xticklabel style={font=\tiny},
- extra x ticks={23.5,27.5,36.5,45.5,54.5,63.5,72.5,81.5,90.5,99.5,108.5},extra x tick labels={},extra x tick style={grid=major,major grid style={gray!40},tick style={draw=none}},
- extra y ticks={0},extra y tick labels={},extra y tick style={grid=major,major grid style={black!60}}]
-\addplot[only marks,mark=*,mark size=0.9pt,blue!70!black,error bars/.cd,y dir=both,y explicit,error bar style={blue!50}] table[x=i,y=beta,y error plus=hi,y error minus=lo,col sep=comma,restrict expr to domain={\thisrow{sig}}{1:1}]{coef.csv};
-\addplot[only marks,mark=o,mark size=0.9pt,gray,error bars/.cd,y dir=both,y explicit,error bar style={gray!60}] table[x=i,y=beta,y error plus=hi,y error minus=lo,col sep=comma,restrict expr to domain={\thisrow{sig}}{0:0}]{coef.csv};
+\begin{axis}[paper,width=\textwidth,height=5.0cm,xmin=0.5,xmax=109.5,ymin=-17,ymax=38,ylabel={$\beta$ (minutes of delay)},ytick={-10,0,10,20,30},ymajorgrids,
+ xtick={12,25.5,32,41,50,59,68,77,86,95,104,109},xticklabels={Hour of day,Fri,Saturday,Sunday,LW first,LW middle,LW last,Eve (Fri),Eve (other),Single hol.,Make-up,},
+ x tick label style={font=\tiny},xtick style={draw=none},clip=false,legend style={font=\tiny,draw=none,fill=white,at={(0.01,0.03)},anchor=south west},legend columns=1]
+\fill[cBand] (axis cs:0.5,-17) rectangle (axis cs:23.5,38);
+\fill[cBand] (axis cs:27.5,-17) rectangle (axis cs:36.5,38);
+\fill[cBand] (axis cs:45.5,-17) rectangle (axis cs:54.5,38);
+\fill[cBand] (axis cs:63.5,-17) rectangle (axis cs:72.5,38);
+\fill[cBand] (axis cs:81.5,-17) rectangle (axis cs:90.5,38);
+\fill[cBand] (axis cs:99.5,-17) rectangle (axis cs:108.5,38);
+\draw[cInk!70] (axis cs:0.5,0)--(axis cs:109.5,0);
+\addplot[only marks,mark=*,mark size=1.1pt,cBlue,error bars/.cd,y dir=both,y explicit,error bar style={cBlue!60,line width=0.5pt}] table[x=i,y=beta,y error plus=hi,y error minus=lo,col sep=comma,restrict expr to domain={\thisrow{sig}}{1:1}]{coef.csv};\addlegendentry{95\% CI excludes 0 (69)}
+\addplot[only marks,mark=o,mark size=1.1pt,cGray,error bars/.cd,y dir=both,y explicit,error bar style={cGray!70,line width=0.5pt}] table[x=i,y=beta,y error plus=hi,y error minus=lo,col sep=comma,restrict expr to domain={\thisrow{sig}}{0:0}]{coef.csv};\addlegendentry{includes 0 (40)}
+\begin{scope}[font=\tiny,text=cInk,cGray]
+\draw (axis cs:11,5.86)--(axis cs:14,10) node[above,text=cInk]{11h: $+$5.9};
+\draw (axis cs:33,14.82)--(axis cs:30,27) node[above,text=cInk]{Sat 14--16h: $+$14.8};
+\draw (axis cs:52,21.49)--(axis cs:50,31) node[above,text=cInk]{First 16--18h: $+$21.5};
+\draw (axis cs:67,-3.91)--(axis cs:66,-10.5) node[below,text=cInk]{Last 10--12h: $-$3.9};
+\draw (axis cs:81,8.28)--(axis cs:77,18) node[above,text=cInk]{Fri eve 20--22h: $+$8.3};
+\draw (axis cs:104,20.75)--(axis cs:97,31) node[above,text=cInk]{Make-up 12--14h: $+$20.7};
+\draw (axis cs:109,-7.53)--(axis cs:104,-12) node[left,text=cInk]{$\ge$4-day term: $-$7.5};
+\end{scope}
 \end{axis}
 \end{tikzpicture}
-\caption{All 109 coefficients of the final model with 95\% intervals (300 day-resampled refits). Filled: interval excludes 0 (69 of 109); hollow: includes 0. Within each day type the points run from the main effect through the eight two-hour blocks 06--22h. Every term is a 0/1 indicator, so $\beta$ is in minutes and directly comparable across terms; all VIFs $\le3.1$.}\label{fig:coef}
+\caption{All 109 coefficients of the final model with 95\% intervals (300 day-resampled refits). Within each day type (alternately shaded) the points run from the main effect through the eight two-hour blocks 06--22h. Every term is a 0/1 indicator, so $\beta$ is in minutes and directly comparable across terms; all VIFs $\le3.1$.}\label{fig:coef}
 \end{figure*}
 \begin{table}[t]\tb\centering
 \begin{tabular}{@{}lrrrr@{}}

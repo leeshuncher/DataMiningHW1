@@ -1,0 +1,17 @@
+y;label;spear;mi;kind
+0;First day $\times$ 14--18h;0.07;0.003;0
+1;LW last day;0.066;0.004;1
+2;Eve of LW;0.056;0.004;0
+3;LW day;0.037;0.005;0
+4;LW first day;0.091;0.006;0
+5;Holiday length;0.037;0.008;0
+6;Sunday;0.06;0.015;0
+7;LW $\times$ daytime;0.14;0.016;0
+8;Friday;0.11;0.019;0
+9;Saturday;0.145;0.039;0
+10;Sat $\times$ daytime;0.332;0.083;0
+11;Weekday number;0.119;0.094;0
+12;Daytime 08--18h;0.716;0.353;0
+13;Hour of day;0.32;0.733;0
+14;Last week (lag);0.857;0.74;1
+15;4-week mean (lag);0.873;0.797;1
