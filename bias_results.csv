@@ -1,0 +1,13 @@
+﻿slice,n,last week (lag 7d),mean per slot x weekday,Ridge log,Ridge log + smearing (in-sample),Ridge log + smearing (out-of-fold),Ridge log + smearing (by predicted level),Ridge L1,GBM log,GBM L1
+all slots,8715,0.01,0.14,0.17,0.07,-0.02,-0.05,0.59,0.24,0.7
+"long weekend, all hours",742,0.71,0.42,-0.23,-0.34,-0.44,-0.56,0.57,0.35,1.11
+[ex ante] long weekend 08-18h,310,1.65,0.82,0.21,0.09,-0.02,-0.34,1.25,0.92,2.13
+[ex ante] long weekend morning 07-12h,155,-0.37,-1.46,-0.71,-0.82,-0.92,-1.14,-0.22,-0.8,-0.28
+[ex ante] lw_first 10-18h,64,10.41,9.34,6.39,6.26,6.14,5.56,10.53,8.2,11.11
+[ex ante] Saturday 08-17h,378,0.59,0.91,1.76,1.63,1.5,0.9,3.02,1.77,3.13
+[ex ante] ordinary weekday 16-20h,952,-0.41,0.03,0.21,0.11,0.01,0.09,0.43,0.23,0.44
+[ex post] actual >= 1.25 x free flow,718,6.95,8.97,8.61,8.49,8.37,7.95,10.04,8.99,10.47
+[ex post] actual >= 1.5 x free flow,367,11.29,14.2,13.86,13.73,13.61,13.16,15.66,14.35,16.0
+"[ex post] long weekend, actual >= 1.25 x FF",97,11.82,11.6,7.25,7.12,7.0,6.49,9.93,8.9,11.17
+"[ex post] long weekend, actual >= 1.5 x FF",50,17.76,17.86,12.66,12.53,12.41,11.87,17.23,15.13,18.09
+"long weekend, night 00-06h + 20-24h",308,-0.22,0.01,-0.65,-0.74,-0.84,-0.79,-0.13,-0.17,0.11

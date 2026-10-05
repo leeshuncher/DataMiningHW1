@@ -98,3 +98,40 @@ def decision_regret(test, P, slot, windows=((6, 10), (10, 14), (14, 18), (18, 22
             for k, p in P.items(): r[k] = act[int(np.argmin(p[m] + 1e-6 * np.arange(m.sum())))] - act.min()
             rows.append(r)
     return pd.DataFrame(rows)
+
+
+def ridge_l1(train, test, cats, nums, iters=15):
+    """Median (L1) regression with the same design: iteratively reweighted ridge on minutes."""
+    enc = OneHotEncoder(handle_unknown="ignore").fit(train[cats])
+    X = lambda df: sp.hstack([enc.transform(df[cats])] + ([sp.csr_matrix(df[nums].values / 30.0)] if nums else [])).tocsr()
+    def fit(Xa, ya, a):
+        w = np.ones(len(ya)); m = Ridge(alpha=a)
+        for _ in range(iters):
+            m.fit(Xa, ya, sample_weight=w); w = 1.0 / np.maximum(np.abs(ya - m.predict(Xa)), 0.25)
+        return m
+    best = None
+    for a in [0.1, 0.3, 1, 3, 10]:
+        errs = []
+        for tr_i, va_i in TimeSeriesSplit(n_splits=4).split(train):
+            m = fit(X(train.iloc[tr_i]), train.minutes.values[tr_i], a)
+            errs.append(np.abs(m.predict(X(train.iloc[va_i])) - train.minutes.values[va_i]).mean())
+        if best is None or np.mean(errs) < best[0]: best = (np.mean(errs), a)
+    return fit(X(train), train.minutes.values, best[1]).predict(X(test)), best[1]
+
+def ridge_log_residuals(train, test, cats, nums):
+    """Ridge on log(minutes). Returns test log-prediction, alpha, in-sample log residuals and out-of-fold (TimeSeriesSplit) log residuals
+    (NaN for the first fold) of the training rows, used for smearing corrections."""
+    enc = OneHotEncoder(handle_unknown="ignore").fit(train[cats])
+    X = lambda df: sp.hstack([enc.transform(df[cats])] + ([sp.csr_matrix(df[nums].values / 30.0)] if nums else [])).tocsr()
+    y = np.log(train.minutes.values); best = None
+    for a in [0.3, 1, 3, 10, 30, 100]:
+        errs = []
+        for tr_i, va_i in TimeSeriesSplit(n_splits=4).split(train):
+            p = Ridge(alpha=a).fit(X(train.iloc[tr_i]), y[tr_i]).predict(X(train.iloc[va_i]))
+            errs.append(np.abs(np.exp(p) - train.minutes.values[va_i]).mean())
+        if best is None or np.mean(errs) < best[0]: best = (np.mean(errs), a)
+    a = best[1]; m = Ridge(alpha=a).fit(X(train), y)
+    ins = y - m.predict(X(train)); oof = np.full(len(y), np.nan)
+    for tr_i, va_i in TimeSeriesSplit(n_splits=4).split(train):
+        oof[va_i] = y[va_i] - Ridge(alpha=a).fit(X(train.iloc[tr_i]), y[tr_i]).predict(X(train.iloc[va_i]))
+    return m.predict(X(test)), a, ins, oof
