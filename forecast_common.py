@@ -6,6 +6,32 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import TimeSeriesSplit
 import lightgbm as lgb
 
+HOLIDAY_KEYS = [("cny", ["小年夜", "除夕", "春節"]), ("qingming", ["兒童節", "掃墓"]), ("dragon", ["端午"]), ("midautumn", ["中秋"]),
+                ("national", ["國慶"]), ("peace228", ["和平紀念"]), ("newyear", ["開國紀念"])]
+
+def holiday_alignment():
+    """For every day of a long weekend (and its eve) the date of the 'same holiday last time': the most recent earlier long weekend of the same
+    holiday (same key, at most ~2 years back (800 days)); days near the start align from the start of the block, days near the end from the end.
+    Holidays without such a predecessor (new holidays, or the earlier one was a single day) give no entry. Returns DataFrame date -> ly_date."""
+    cal = pd.read_csv("data/calendar.csv", parse_dates=["date"])
+    cal["grp"] = (cal.is_holiday != cal.is_holiday.shift()).cumsum()
+    blocks = []
+    for g, b in cal[cal.is_holiday & (cal.block_len >= 3)].groupby("grp"):
+        text = " ".join(str(x) for x in b.description if isinstance(x, str))
+        key = next((k for k, words in HOLIDAY_KEYS if any(w in text for w in words)), None)
+        blocks.append({"key": key, "dates": list(b.date)})
+    rows = []
+    for i, b in enumerate(blocks):
+        if b["key"] is None: continue
+        prev = [p for p in blocks[:i] if p["key"] == b["key"] and (b["dates"][0] - p["dates"][-1]).days <= 800]
+        if not prev: continue
+        p = prev[-1]; n, m = len(b["dates"]), len(p["dates"])
+        for j, dte in enumerate(b["dates"]):
+            k = j if j < n / 2 else m - (n - j)
+            if 0 <= k < m: rows.append((dte, p["dates"][k]))
+        rows.append((b["dates"][0] - pd.Timedelta(days=1), p["dates"][0] - pd.Timedelta(days=1)))   # the eve
+    return pd.DataFrame(rows, columns=["date", "ly_date"]).drop_duplicates("date")
+
 def load_data(slot=60):
     per_day = 1440 // slot
     t = pd.read_csv(f"data/travel_{slot}min.csv", parse_dates=["depart"]).set_index("depart")
@@ -15,6 +41,9 @@ def load_data(slot=60):
     cal["eve_len"] = np.where(cal.daytype == "eve_of_long", cal.next_len.fillna(0), 0)
     d = t[["minutes"]].copy(); d["date"] = d.index.normalize()
     d = d.merge(cal[["date", "daytype", "dow", "block_len", "block_pos", "is_makeup_workday", "eve_len"]], on="date", how="left").set_index(t.index)
+    al = holiday_alignment().set_index("date").ly_date
+    ly_ts = d.date.map(al) + (d.index - d.index.normalize())
+    d["ly"] = t.minutes.reindex(pd.DatetimeIndex(ly_ts)).values
     d["slot"] = (d.index.hour * 60 + d.index.minute) // slot
     d["hod"] = d.slot * slot / 60.0
     s = d.minutes
@@ -42,7 +71,9 @@ def add_cats(d, eve_mode):
     else: d["c_eve"] = "no"
     return d
 
-def ridge_fit(train, test, cats, nums, log):
+def ridge_fit(train, test, cats, nums, log, weights=None):
+    """weights: optional per-row training weights (validation errors in the alpha search stay unweighted)."""
+    w_all = np.ones(len(train)) if weights is None else np.asarray(weights, float)
     enc = OneHotEncoder(handle_unknown="ignore").fit(train[cats])
     X = lambda df: sp.hstack([enc.transform(df[cats])] + ([sp.csr_matrix(df[nums].values / 30.0)] if nums else [])).tocsr()
     y = np.log(train.minutes) if log else train.minutes
@@ -50,10 +81,10 @@ def ridge_fit(train, test, cats, nums, log):
     for a in [0.3, 1, 3, 10, 30, 100]:
         errs = []
         for tr_i, va_i in TimeSeriesSplit(n_splits=4).split(train):
-            p = Ridge(alpha=a).fit(X(train.iloc[tr_i]), y.iloc[tr_i]).predict(X(train.iloc[va_i]))
+            p = Ridge(alpha=a).fit(X(train.iloc[tr_i]), y.iloc[tr_i], sample_weight=w_all[tr_i]).predict(X(train.iloc[va_i]))
             errs.append(np.abs((np.exp(p) if log else p) - train.minutes.iloc[va_i]).mean())
         if best is None or np.mean(errs) < best[0]: best = (np.mean(errs), a)
-    p = Ridge(alpha=best[1]).fit(X(train), y).predict(X(test))
+    p = Ridge(alpha=best[1]).fit(X(train), y, sample_weight=w_all).predict(X(test))
     return (np.exp(p) if log else p), best[1]
 
 GBM_CAL = ["slot", "dow", "dtype_code", "block_len", "block_pos", "eve", "eve_len", "makeup"]

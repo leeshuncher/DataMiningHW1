@@ -1,0 +1,7 @@
+﻿group,n_windows,n_days,leave at window start,last week (lag 7d),"same holiday last time, else last week",mean per slot x weekday (2024),"Ridge log, train 2024","Ridge log, 2023+2024 uniform","Ridge log, 2023 ordinary x0.1","Ridge log +ly, 2023 ordinary x0.1"
+all,1455,365,1.52,0.66,0.61,0.57,0.42,0.37,0.38,0.4
+ordinary (weekday+sat+sun),1287,323,1.46,0.54,0.54,0.39,0.38,0.34,0.35,0.36
+long weekend days only,124,31,2.36,1.81,1.09,2.2,0.8,0.66,0.75,0.8
+lw_first,32,8,5.3,4.5,2.44,5.32,2.31,1.82,2.11,2.39
+eve_of_long,32,8,0.89,0.97,1.27,1.15,0.17,0.29,0.15,0.19
+holiday days (long weekend + eve),156,39,2.06,1.64,1.13,1.98,0.67,0.58,0.63,0.68

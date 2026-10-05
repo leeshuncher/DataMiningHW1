@@ -1,0 +1,67 @@
+﻿slice,days,candidate,baseline,improvement_%,ci95_low,ci95_high
+all slots,365,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",5.7,3.6,8.1
+all slots,365,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",1.8,-0.3,4.2
+all slots,365,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),20.7,11.8,28.4
+all slots,365,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),8.8,4.9,12.8
+all slots,365,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",2.4,0.8,4.0
+all slots,365,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",18.5,10.0,26.4
+ordinary (weekday+sat+sun),323,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",5.7,3.3,8.4
+ordinary (weekday+sat+sun),323,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",-1.0,-1.7,-0.3
+ordinary (weekday+sat+sun),323,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),18.8,9.0,27.6
+ordinary (weekday+sat+sun),323,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),3.1,2.1,4.1
+ordinary (weekday+sat+sun),323,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",2.6,1.1,4.1
+ordinary (weekday+sat+sun),323,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",20.9,11.4,29.4
+weekday,238,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",7.7,5.5,10.5
+weekday,238,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",-1.9,-2.8,-1.1
+weekday,238,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),26.3,15.1,37.0
+weekday,238,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),3.5,2.3,5.1
+weekday,238,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",1.0,-0.5,2.3
+weekday,238,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",27.0,15.6,37.0
+sat,42,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",2.2,-3.3,7.6
+sat,42,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",0.2,-1.2,1.5
+sat,42,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),7.7,-14.6,24.3
+sat,42,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),1.7,0.2,3.3
+sat,42,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",4.4,1.2,7.5
+sat,42,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",11.8,-8.9,26.9
+sun,43,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",9.2,4.6,15.2
+sun,43,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",-1.0,-2.1,-0.2
+sun,43,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),6.3,-17.6,24.7
+sun,43,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),8.6,5.6,12.7
+sun,43,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",5.1,2.1,7.9
+sun,43,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",11.1,-10.4,28.6
+holiday days (long weekend + eve),39,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",6.4,1.1,11.3
+holiday days (long weekend + eve),39,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",15.1,4.4,24.5
+holiday days (long weekend + eve),39,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),30.4,10.4,43.6
+holiday days (long weekend + eve),39,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),29.9,12.7,41.9
+holiday days (long weekend + eve),39,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",0.7,-5.4,5.9
+holiday days (long weekend + eve),39,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",4.6,-25.4,25.6
+"long weekend, all hours",31,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",7.5,0.8,14.1
+"long weekend, all hours",31,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",17.0,3.2,28.7
+"long weekend, all hours",31,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),38.7,20.9,50.8
+"long weekend, all hours",31,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),37.9,22.7,49.2
+"long weekend, all hours",31,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",-1.6,-9.7,5.5
+"long weekend, all hours",31,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",14.0,-12.9,34.2
+long weekend 08-18h,31,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",6.2,-2.6,14.5
+long weekend 08-18h,31,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",24.9,6.6,39.2
+long weekend 08-18h,31,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),50.0,34.9,62.3
+long weekend 08-18h,31,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),50.8,36.5,60.6
+long weekend 08-18h,31,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",-0.5,-10.4,8.9
+long weekend 08-18h,31,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",32.1,8.6,47.9
+lw_first 10-18h,8,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",12.9,-5.8,27.2
+lw_first 10-18h,8,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",36.6,11.9,50.4
+lw_first 10-18h,8,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),57.7,40.1,67.1
+lw_first 10-18h,8,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),53.6,30.2,65.0
+lw_first 10-18h,8,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",-4.7,-18.3,7.4
+lw_first 10-18h,8,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",31.8,6.7,48.6
+eve 16-23h,8,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",-0.9,-6.2,4.0
+eve 16-23h,8,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",9.8,4.6,15.7
+eve 16-23h,8,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),-10.1,-153.1,37.4
+eve 16-23h,8,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),-8.6,-148.2,36.6
+eve 16-23h,8,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",11.5,5.8,18.7
+eve 16-23h,8,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",-49.1,-145.9,6.4
+Saturday 08-17h,42,"Ridge log, 2023 ordinary x0.1","Ridge log, 2023+2024 uniform",2.5,-4.5,9.5
+Saturday 08-17h,42,"Ridge log, 2023 ordinary x0.1","Ridge log, train 2024",0.1,-1.7,1.7
+Saturday 08-17h,42,"Ridge log, 2023 ordinary x0.1",last week (lag 7d),12.2,-11.6,30.2
+Saturday 08-17h,42,"Ridge log, 2023 ordinary x0.1",mean per slot x weekday (2024),0.2,-0.9,1.5
+Saturday 08-17h,42,"Ridge log +ly, 2023 ordinary x0.1","Ridge log, 2023 ordinary x0.1",4.3,0.1,7.9
+Saturday 08-17h,42,"Ridge log +ly, 2023 ordinary x0.1","same holiday last time, else last week",16.0,-4.9,31.2
